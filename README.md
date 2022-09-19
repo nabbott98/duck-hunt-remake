@@ -1,4 +1,6 @@
 # project1
+![Duck Hunt Game Preview](/Duck-Hunt-Game-Preview.png)
+
 Intended project  -- Duck Hunt Recreation -- Note: If recreating a game is not acceptable I can change the theme to shooting airplanes from a battleship per se, so the concept of the game is similar but not look
 Version of game can be found here - https://www.retrogames.cz/play_1185-NES.php?language=EN
 
@@ -16,6 +18,8 @@ Asssets I intend on using: one of retro or updated, both appear to be copyright 
 - Retro themed: https://www.mariomayhem.com/downloads/sprites/duck_hunt_nes_sprites.php
 - Updated: https://www.spriters-resource.com/fullview/63915/
 
+![Duck Hunt Assets](/Duck%20Hunt%20Assets%20-%20Updated.png)
+
 As a user, I want the ability to... 
   - Choose difficulty
   - Choose hunting weapon
@@ -31,6 +35,8 @@ As a user, I want the ability to...
 
 WireFrames - 
 -Wireframes inside repo
+
+![Duck Hunt Wireframe](/Duck%20Hunt%20WireFrame.drawio.png)
 
 
 Player: {
@@ -67,9 +73,11 @@ function - gameloop - holds the entire logic that runs the game
 function - detectHit - used to see if corsshair has collided with duck when mouse is clicked
 function - duckFlight - used to move the ducks around the screen, random flight to be determined by function
 
+Schedule...
+- Monday - Build environment, start loading in assets
+- Tuesday - Finish loading in assets, collision point and click 
+- Wednesday - Game scoring and animations
+- Thursday - Finishing touches and animations
+- Friday - Presentation Day!
 
-Monday - Build environment, start loading in assets
-Tuesday - Finish loading in assets, collision point and click 
-Wednesday - Game scoring and animations
-Thursday - Finishing touches and animations
-Friday - Presentation Day!
+
