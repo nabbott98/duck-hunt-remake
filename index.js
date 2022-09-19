@@ -1,23 +1,27 @@
-// const game = document.getElementById('canvas')
-
-// const ctx = game.getContext('2d')
-
-function initCanvas(){
-    var ctx = document.getElementById('canvas').getContext('2d');
+function mousePosition(ctx){
     ctx.canvas.addEventListener('mousemove', function(event){
-        var mouseX = event.clientX - ctx.canvas.offsetLeft;
-        var mouseY = event.clientY - ctx.canvas.offsetTop;
-        var status = document.getElementById('status');
+        let mouseX = event.clientX - ctx.canvas.offsetLeft;
+        let mouseY = event.clientY - ctx.canvas.offsetTop;
+        let status = document.getElementById('status');
         status.innerHTML = mouseX+" | "+mouseY;
     });
     ctx.canvas.addEventListener('click', function(event){
-        var mouseX = event.clientX - ctx.canvas.offsetLeft;
-        var mouseY = event.clientY - ctx.canvas.offsetTop;
-        // alert(mouseX+" | "+mouseY);
-        ctx.fillStyle = "orange";
-        ctx.fillRect(mouseX-15, mouseY-15, 30, 30);
+        let mouseX = event.clientX - ctx.canvas.offsetLeft;
+        let mouseY = event.clientY - ctx.canvas.offsetTop;
+        alert(mouseX+" | "+mouseY);
     });
 }
 window.addEventListener('load', function(event) {
-    initCanvas();
+    let ctx = document.getElementById('canvas').getContext('2d');
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = window.innerWidth/2.14;
+    ctx.imageSmoothingEnabled = false;
+    mousePosition(ctx);
+
+
+    base_image = new Image();
+    base_image.src = 'individual-assets/shot-3.png';
+    base_image.onload = function(){
+        ctx.drawImage(base_image, 0, 0, 26, 17, 283, 389, 50, 32.7);
+    }
 });

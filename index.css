@@ -7,9 +7,9 @@
 }
 
 canvas {
-    height:;
     border: 3px solid orangered;
     width: 100%;
+    image-rendering: pixelated;
     background-image: url("individual-assets/game-background-wide.png");
     background-size: 100%;
     aspect-ratio: 2.14/1;
@@ -17,6 +17,6 @@ canvas {
 }
 h2 {
     border: 3px solid forestgreen;
-    width: 90px;
+    width: 100px;
     height: 28px;
 }
