@@ -1,0 +1,13 @@
+#container {
+    margin: 5px 5px 5px 0px;
+}
+
+canvas {
+    height:;
+    border: 3px solid orangered;
+    width: 100%;
+    background-image: url("individual-assets/game-background-wide.png");
+    background-size: 100%;
+    aspect-ratio: 2.14/1;
+
+}
