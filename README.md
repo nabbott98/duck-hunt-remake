@@ -66,3 +66,10 @@ Dog: {
 function - gameloop - holds the entire logic that runs the game
 function - detectHit - used to see if corsshair has collided with duck when mouse is clicked
 function - duckFlight - used to move the ducks around the screen, random flight to be determined by function
+
+
+Monday - Build environment, start loading in assets
+Tuesday - Finish loading in assets, collision point and click 
+Wednesday - Game scoring and animations
+Thursday - Finishing touches and animations
+Friday - Presentation Day!
