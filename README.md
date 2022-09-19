@@ -1,7 +1,7 @@
 # project1
 ![Duck Hunt Game Preview](/Duck-Hunt-Game-Preview.png)
 
-Intended project  -- Duck Hunt Recreation -- Note: If recreating a game is not acceptable I can change the theme to shooting airplanes from a battleship per se, so the concept of the game is similar but not look
+Intended project  -- Duck Hunt Recreation
 Version of game can be found here - https://www.retrogames.cz/play_1185-NES.php?language=EN
 
 Backup Idea - Shoots and Ladders remake
