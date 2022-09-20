@@ -4,7 +4,8 @@ let shots = 3
 let img = `individual-assets/shot-${shots}.png`
 let duckFlight = ["individual-assets/duck-flight-b-h-1.png", "individual-assets/duck-flight-b-h-2.png", "individual-assets/duck-flight-b-h-3.png", "individual-assets/duck-flight-b-h-2.png"]
 let duckPhase = 0
-const duckShot = {name: 'duck-shot-b', location: `individual-assets/duck-shot-b.png`, posX: 100, posY: 200, adjX: 0, adjY: 0}
+const duckShot = {name: 'duck-shot-b', location: `individual-assets/duck-flight-v-h-2.png`, posX: 100, posY: 200, adjX: 0, adjY: 0}
+let huntArea
 
 // Mouse position inside the canvas system
 function mousePosition(ctx){
@@ -29,12 +30,12 @@ const displayBoard = (ctx, img) => {
     }
 }
 
-const displayImage = (ctx, img) => {
-    board = new Image()
-    board.src = img.location
-    console.log(board)
-    base_image.onload = function(){
-        ctx.drawImage(board, 100,100,100,100)
+const displayImage = (ctx, img, area) => {
+    console.log(area)
+    pic = new Image()
+    pic.src = img.location
+    pic.onload = function(){
+        ctx.drawImage(pic, img.posX,img.posY, pic.width / background.width * ctx.canvas.width, pic.height / background.height * ctx.canvas.height)
     }
 }
 
@@ -49,8 +50,11 @@ window.addEventListener('load', function(event) {
     ctx.canvas.width = window.innerWidth
     ctx.canvas.height = window.innerWidth/2.14
     ctx.imageSmoothingEnabled = false
+    let huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(158 / background.height * ctx.canvas.height)}
+
     mousePosition(ctx)
     displayBoard(ctx, img)
+    displayImage(ctx, duckShot, huntArea)
   
     let duck = setInterval(function(){
         base_image1 = new Image()
@@ -62,5 +66,23 @@ window.addEventListener('load', function(event) {
     }, 500);
 
 
-    displayImage(ctx, duckShot)
+
 });
+
+
+// Game Order:
+// Main Game Loop
+//  - Beginning Round Animation
+//      - Dog Walk --> Dog Jump over grass
+//      - Round box in middle showing current round
+//  -Duck loop --> Ducks 1-10 (Loop ten times through)
+//      - Duck Flying --> blink #duck icon
+//      - onClick -->if(shotBoard>3) "fire gun" check collision & shotboard--
+//          -true --> duck fall animation & turn #duck red --> dog pop up animation holding #of duck shot --> update score & reset shot board
+//          -false --> shotboard -- 
+//      if time > limit 
+//          - dog with no duck animaiton & keep #duck white - reset shot #duck++
+//  - Reset
+//      
+//
+//
