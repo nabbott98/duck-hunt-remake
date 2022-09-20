@@ -1,3 +1,6 @@
+let shots = 3
+
+
 function mousePosition(ctx){
     ctx.canvas.addEventListener('mousemove', function(event){
         let mouseX = event.clientX - ctx.canvas.offsetLeft;
@@ -20,8 +23,8 @@ window.addEventListener('load', function(event) {
 
 
     base_image = new Image();
-    base_image.src = 'individual-assets/shot-3.png';
+    base_image.src = `individual-assets/shot-${shots}.png`;
     base_image.onload = function(){
-        ctx.drawImage(base_image, 0, 0, 26, 17, 283, 389, 50, 32.7);
+        ctx.drawImage(base_image, 0, 0, 26, 17, 148 / 512 * ctx.canvas.width, 203 / 240 * ctx.canvas.height, 26 / 512 * ctx.canvas.width, 17 / 240 * ctx.canvas.height);
     }
 });
