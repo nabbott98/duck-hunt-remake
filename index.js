@@ -128,7 +128,35 @@ const grass = (ctx) => {
     displayImage(ctx, grassImg, 0, 146 / background.height * ctx.canvas.height)
 }
 
-const scoreBoard = () => {
+const scoreBoard = (ctx) => {
+    // Text for R# font, fill, draw text
+    ctx.font = `bolder ${9 / background.height * ctx.canvas.height}px Arial`
+    ctx.fillStyle = `rgba(151, 235, 30, 1)`
+    ctx.fillText(`R = ${round}`, 148.6 / background.width * ctx.canvas.width, 195.5 / background.height * ctx.canvas.height)
+
+    // Text for R# font, fill, draw text
+    ctx.font = `bolder ${10 / background.height * ctx.canvas.height}px Arial`
+    ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    ctx.textAlign = 'right';
+    ctx.fillText(`${score.toString().padStart(6, '0')}`, 365 / background.width * ctx.canvas.width, 212 / background.height * ctx.canvas.height)
+    ctx.fillText(`SCORE`, 365 / background.width * ctx.canvas.width, 220 / background.height * ctx.canvas.height)
+
+    // Duck Icons indicating which duck/ducks within the round you are at
+    ctx.fillStyle = `white`
+    ctx.fillRect(219 / background.width * ctx.canvas.width * 0.984, 208 / background.height * ctx.canvas.height * 0.99, 87.2 / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
+
+    // Blue bars indicating how many ducks/round you must hit to advance rounds 
+    ctx.fillStyle = `rgba(54, 176, 255, 1)`
+    ctx.fillRect(219 / background.width * ctx.canvas.width * 0.984, 215.45 / background.height * ctx.canvas.height * 0.99, (87.2 * ducksPerRound / 10) / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
+
+    displayImage(ctx, shotBoard[shots], 148 / background.width * ctx.canvas.width, 204 / background.height * ctx.canvas.height)
+
+    displayImage(ctx, duckBoard, 189 / background.width * ctx.canvas.width, 203 / background.height * ctx.canvas.height)
+
+    // Red/white rectangle
+
+    // Ducks/round blue rectangle
+   
 
 }
 
@@ -186,6 +214,7 @@ window.addEventListener('load', function(event) {
     ctx.canvas.width = window.innerWidth
     ctx.canvas.height = window.innerWidth/2.14
     ctx.imageSmoothingEnabled = false
+    
 
     // Define hunt area once ctx is created
     let huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(158 / background.height * ctx.canvas.height)}
@@ -193,6 +222,7 @@ window.addEventListener('load', function(event) {
 
     displayImage(ctx, duckVD[0], 100, 322)
     grass(ctx)
+    scoreBoard(ctx)
 
 });
 
