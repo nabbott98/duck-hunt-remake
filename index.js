@@ -2,7 +2,7 @@
 const background = {width: 512, height: 240}
 let huntArea
 let round = 1
-let ducksPerRound = 6
+let ducksPerRound = [null, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 9, 10]
 let shots = 3
 let score = 0
 let duckColor = ['B','V','R']
@@ -114,6 +114,9 @@ grassImg.src = `individual-assets/grass.png`
 let roundNum = new Image()
 roundNum.src = `individual-assets/round-num-large.png`
 
+let boardBackground = new Image()
+boardBackground.src = `individual-assets/board-background.png`
+
 // Functions
 // Mouse position inside the canvas system
 function mousePosition(ctx){
@@ -138,9 +141,21 @@ const grass = (ctx) => {
     displayImage(ctx, grassImg, 0, 146 / background.height * ctx.canvas.height)
 }
 
+const scoreBackground = (ctx) => {
+    displayImage(ctx, boardBackground, 0, 188 / background.height * ctx.canvas.height)
+}
+
 const scoreBoard = (ctx) => {
+    // redisplay board background
+    scoreBackground(ctx)
+
     // Text for R# font, fill, draw text
-    arcadeText(ctx, `R=${round}`, 8, `rgba(151, 235, 30, 1)`, 149.2, 197, 'left')
+    // If R > 9 draw bigger box under R= first because the text will stretch over
+    if( round > 9) {
+        ctx.fillStyle = `rgba(23, 14, 14, 1)`
+    ctx.fillRect(151 / background.width * ctx.canvas.width * 0.984, 190.6 / background.height * ctx.canvas.height * 0.99, 32.5 / background.width * ctx.canvas.width * 0.984, 8.4 / background.height * ctx.canvas.height * 0.99)
+    }
+    arcadeText(ctx, `R=${round}`, 8, `rgba(151, 235, 30, 1)`, 149.2, 197.4, 'left')
 
     // To add if condition to draw brown box behind if R>9
     arcadeText(ctx, `${score.toString().padStart(6, '0')}`, 8, "white", 365, 213, 'right')
@@ -152,7 +167,7 @@ const scoreBoard = (ctx) => {
 
     // Blue bars indicating how many ducks/round you must hit to advance rounds 
     ctx.fillStyle = `rgba(54, 176, 255, 1)`
-    ctx.fillRect(219 / background.width * ctx.canvas.width * 0.984, 215.45 / background.height * ctx.canvas.height * 0.99, (87.2 * ducksPerRound / 10) / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
+    ctx.fillRect(219 / background.width * ctx.canvas.width * 0.984, 215.45 / background.height * ctx.canvas.height * 0.99, (87.2 * ducksPerRound[round] / 10) / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
 
     // Display shots board
     displayImage(ctx, shotBoard[shots], 148 / background.width * ctx.canvas.width, 204 / background.height * ctx.canvas.height)
@@ -161,10 +176,6 @@ const scoreBoard = (ctx) => {
     displayImage(ctx, duckBoard, 189 / background.width * ctx.canvas.width, 203 / background.height * ctx.canvas.height)
 
     // Red/white rectangle
-
-
-   
-
 }
 
 // Static game animations ie same animation X position may change
@@ -208,10 +219,6 @@ const duckFall = (color, x, y) => {
 // Game Functions
 
 
-const newRound = () => {
-
-}
-
 const hunting = () => {
 
 }
@@ -220,6 +227,7 @@ const displayImage = (ctx, img, x, y) => {
         ctx.drawImage(img, x, y, img.width / background.width * ctx.canvas.width, img.height / background.height * ctx.canvas.height)
 }
 
+// Custom text font from google fonts 
 const arcadeText = (ctx, text, size, color, x, y, align) => {
     const arcadeFont = new FontFace('pixelFont', 'url(PressStart2P-Regular.ttf)')
     arcadeFont.load().then(function(font){
