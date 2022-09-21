@@ -6,10 +6,11 @@ let shots = 3
 let score = 0
 let duckColor = ['B','V','R']
 let ctx
+let shotStatus = false
 
 // Movement Variables
 let duckPhase = 0
-let duckXY = [0 ,0]
+let duckXY = [0 , 50]
 let mouseClick = []
 
 // Round dependant variables
@@ -129,13 +130,6 @@ const mousePosition = (ctx) =>{
         status.innerHTML = mouseX+" | "+mouseY
         mouseClick = [mouseX, mouseY]
     })
-    // ctx.canvas.addEventListener('click', function(event){
-    //     let mouseX = event.clientX - ctx.canvas.offsetLeft
-    //     let mouseY = event.clientY - ctx.canvas.offsetTop
-    //     //alert(mouseX+" | "+mouseY)
-    //     mouseClick = [mouseX, mouseY]
-    //     console.log(mouseClick)
-    // })
 }
 
 const click = (ctx) => {
@@ -144,13 +138,20 @@ const click = (ctx) => {
     let mouseY = event.clientY - ctx.canvas.offsetTop
     //alert(mouseX+" | "+mouseY)
     mouseClick = [mouseX, mouseY]
-    console.log('click:',mouseClick)
-    console.log('duckXY: ',duckXY)
+    
+    shots--
+
+
+    // Test Collision
+    if(duckXY [0] < mouseClick[0]  && mouseClick[0] < duckXY [0] + 33 / background.width * ctx.canvas.width && duckXY [1] < mouseClick[1]  && mouseClick[1] < duckXY [0] + 39 / background.width * ctx.canvas.width){
+        scoreAdd()
+        shotStatus = true
+    } else {
+        console.log(false)
+    }
+    scoreBoard(ctx)
 })
 }
-
-
-
 
 // Static background items -- sky, grass, gameboard
 const sky = (ctx) => {
@@ -203,10 +204,11 @@ const scoreBoard = (ctx) => {
 
     // Display duck board
     displayImage(ctx, duckBoard, 189 / background.width * ctx.canvas.width, 203 / background.height * ctx.canvas.height)
-
-    // Red/white rectangle
 }
 
+const scoreAdd = () => {
+    score += 1000
+}
 // Static game animations ie same animation X position may change
 const dogWalk = (ctx) => {
     //setInterval({
@@ -225,14 +227,13 @@ const dogWalk = (ctx) => {
     //Dog Jump
 }
 
-const dogWDuck= (ctx) => {
-
+const dogWDuck= (ctx, x) => {
+    console.log('doggo')
 } 
 
 const duckFall = (color, x, y) => {
-    //let imgArr
-    //if(color = B){imgArr = duckBF}else if(color === V){imgArr = duckVF} else {imgArr = duckRF}
-    // 
+
+    
 
 }
 
@@ -243,13 +244,25 @@ const hunting = (ctx) => {
     //      - onClick -->if(shotBoard>3) "fire gun" check collision & shotboard--
     //          -true --> duck fall animation & turn #duck red --> dog pop up animation holding #of duck shot --> update 
     let hunt = setInterval(function(){
+        if(shotStatus){
+            clearInterval(hunt)
+            duckFall(ctx)
+            return
+        }
         sky(ctx)
-        duckXY[0] += 100
-        ctx.fillStyle = "white"
-        ctx.fillRect(duckXY[0], duckXY[1], 100, 100)
+        duckXY[0] += 18
 
-        if(duckXY[0] > 1000){duckXY[0] = 0}
-    }, 700)
+        displayImage(ctx, duckBH[duckPhase], duckXY[0], duckXY[1])
+
+        duckPhase++
+        if (duckPhase > 3){
+            duckPhase = 0
+        }
+        if(duckXY[0] > 1000) {
+            duckXY[0] = 0
+        }
+
+    }, 500)
 }
 
 // Display fucntions --> Image, text
@@ -290,6 +303,7 @@ window.addEventListener('load', function(event) {
     scoreBoard(ctx)
     dogWalk(ctx)
     hunting(ctx)
+    
 })
 
 //ctx.canvas.addEventListener('click', clickHit())
