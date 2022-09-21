@@ -5,6 +5,12 @@ let round = 1
 let shots = 3
 let score = 0
 let duckColor = ['B','V','R']
+let ctx
+
+// Movement Variables
+let duckPhase = 0
+let duckXY = [0 ,0]
+let mouseClick = []
 
 // Round dependant variables
 let ducksPerRound = [null, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 9, 10]
@@ -17,26 +23,13 @@ colorScore = [
 
 perfectRound = [null, 10000,  10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 15000, 15000, 15000, 15000, 15000, 20000, 20000, 20000, 20000, 20000, 30000]
 
-
-// Movement Variables
-let duckPhase = 0
-let duckXY = [0 ,0]
-
-// Import font
-//const arcadeFont = new FontFace('pixelFont', 'url(PressStart2P-Regular.ttf)')
-
-
-
-
+let hitDuck = [false, false, false, false, false, false, false, false, false, false,]
 
 // Image loading
 // Duck color [0: brown, 1: violet, 2: red]
 
 // Import flying ducks -- I had to do most of the importing by hardcoding :(
     // I tried to use a 3d array to store all the ducks but I could nto get it to work
-// Array convention [color][flight direction][phase]
-
-
 //Import Flying Ducks and falling ducks
 let duckBH = []
 let duckVH = []
@@ -93,7 +86,6 @@ duckVS.src = `individual-assets/duck-flight-v-s-1.png`
 duckRS = new Image()
 duckRS.src = `individual-assets/duck-flight-r-s-1.png`
 
-
 // Import dogs with duck and shot board assets
 let dogDuck = []
 let shotBoard = []
@@ -129,19 +121,37 @@ boardBackground.src = `individual-assets/board-background.png`
 
 // Functions
 // Mouse position inside the canvas system
-function mousePosition(ctx){
+const mousePosition = (ctx) =>{
     ctx.canvas.addEventListener('mousemove', function(event){
         let mouseX = event.clientX - ctx.canvas.offsetLeft
         let mouseY = event.clientY - ctx.canvas.offsetTop
         let status = document.getElementById('status')
         status.innerHTML = mouseX+" | "+mouseY
-    });
-    ctx.canvas.addEventListener('click', function(event){
-        let mouseX = event.clientX - ctx.canvas.offsetLeft
-        let mouseY = event.clientY - ctx.canvas.offsetTop
-        alert(mouseX+" | "+mouseY)
-    });
+        mouseClick = [mouseX, mouseY]
+    })
+    // ctx.canvas.addEventListener('click', function(event){
+    //     let mouseX = event.clientX - ctx.canvas.offsetLeft
+    //     let mouseY = event.clientY - ctx.canvas.offsetTop
+    //     //alert(mouseX+" | "+mouseY)
+    //     mouseClick = [mouseX, mouseY]
+    //     console.log(mouseClick)
+    // })
 }
+
+const click = (ctx) => {
+    ctx.canvas.addEventListener('click', function(event){
+    let mouseX = event.clientX - ctx.canvas.offsetLeft
+    let mouseY = event.clientY - ctx.canvas.offsetTop
+    //alert(mouseX+" | "+mouseY)
+    mouseClick = [mouseX, mouseY]
+    console.log('click:',mouseClick)
+    console.log('duckXY: ',duckXY)
+})
+}
+
+
+
+
 // Static background items -- sky, grass, gameboard
 const sky = (ctx) => {
     displayImage(ctx, skyImg, 0, 0)
@@ -154,6 +164,12 @@ const grass = (ctx) => {
 const scoreBackground = (ctx) => {
     displayImage(ctx, boardBackground, 0, 188 / background.height * ctx.canvas.height)
 }
+
+// const duckRect = (ctx) => {
+//     for(let i = 0; i < 10; i++){
+//         // Test if a duck was hit
+//     }
+// }
 
 const scoreBoard = (ctx) => {
     // redisplay board background
@@ -178,6 +194,9 @@ const scoreBoard = (ctx) => {
     // Blue bars indicating how many ducks/round you must hit to advance rounds 
     ctx.fillStyle = `rgba(54, 176, 255, 1)`
     ctx.fillRect(219 / background.width * ctx.canvas.width * 0.984, 215.45 / background.height * ctx.canvas.height * 0.99, (87.2 * ducksPerRound[round] / 10) / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
+
+    // Duck symbols indiv
+    // duckRect(ctx)
 
     // Display shots board
     displayImage(ctx, shotBoard[shots], 148 / background.width * ctx.canvas.width, 204 / background.height * ctx.canvas.height)
@@ -204,20 +223,11 @@ const dogWalk = (ctx) => {
     //Dog sniff (move nose two times)
 
     //Dog Jump
-
 }
 
-
-const dogSingleDuck = () => {
+const dogWDuck= (ctx) => {
 
 } 
-
-const dogDoubleDuck = () => {
-
-}
-const dogNoDuck = () => {
-
-}
 
 const duckFall = (color, x, y) => {
     //let imgArr
@@ -227,12 +237,22 @@ const duckFall = (color, x, y) => {
 }
 
 // Game Functions
+const hunting = (ctx) => {
+    //-Duck loop --> Ducks 1-10 (Loop ten times through)
+    //      - Duck Flying --> blink #duck icon
+    //      - onClick -->if(shotBoard>3) "fire gun" check collision & shotboard--
+    //          -true --> duck fall animation & turn #duck red --> dog pop up animation holding #of duck shot --> update 
+    let hunt = setInterval(function(){
+        sky(ctx)
+        duckXY[0] += 100
+        ctx.fillStyle = "white"
+        ctx.fillRect(duckXY[0], duckXY[1], 100, 100)
 
-
-const hunting = () => {
-
+        if(duckXY[0] > 1000){duckXY[0] = 0}
+    }, 700)
 }
 
+// Display fucntions --> Image, text
 const displayImage = (ctx, img, x, y) => {
         ctx.drawImage(img, x, y, img.width / background.width * ctx.canvas.width, img.height / background.height * ctx.canvas.height)
 }
@@ -252,25 +272,27 @@ const arcadeText = (ctx, text, size, color, x, y, align) => {
 // When window loads
 window.addEventListener('load', function(event) {
     //CTX area
-    let ctx = document.getElementById('canvas').getContext('2d')
+    ctx = document.getElementById('canvas').getContext('2d')
     mousePosition(ctx)
+    click(ctx)
+    
     ctx.canvas.width = window.innerWidth
     ctx.canvas.height = window.innerWidth/2.14
     ctx.imageSmoothingEnabled = false
     
-
+    //ctx.canvas.addEventListener('click', clickHit())
     // Define hunt area once ctx is created
-    let huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(158 / background.height * ctx.canvas.height)}
+    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(158 / background.height * ctx.canvas.height)}
 
-
+    //Game functions
     displayImage(ctx, duckVD[0], 240, 100)
     grass(ctx)
     scoreBoard(ctx)
     dogWalk(ctx)
+    hunting(ctx)
+})
 
-    
-
-});
+//ctx.canvas.addEventListener('click', clickHit())
 
 
 // Game Order:
