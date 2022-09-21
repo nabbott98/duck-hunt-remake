@@ -1,3 +1,24 @@
+// Global game variables
+const background = {width: 512, height: 240}
+let huntArea
+let round = 1
+let ducksPerRound = 6
+let shots = 3
+let score = 0
+let duckColor = ['B','V','R']
+
+
+// Movement Variables
+let duckPhase = 0
+let duckXY = [0 ,0]
+
+// Import font
+//const arcadeFont = new FontFace('pixelFont', 'url(PressStart2P-Regular.ttf)')
+
+
+
+
+
 // Image loading
 // Duck color [0: brown, 1: violet, 2: red]
 
@@ -83,26 +104,15 @@ for (let i = 0; i < 7; i++){
 let duckBoard = new Image()
 duckBoard.src = `individual-assets/duck-board.png`
 
-// Import sky and grass
+// Import sky, grass, round-num board
 let skyImg = new Image()
 skyImg.src = `individual-assets/sky.png`
 
 let grassImg = new Image()
 grassImg.src = `individual-assets/grass.png`
 
-// Global game variables
-const background = {width: 512, height: 240}
-let huntArea
-let round = 1
-let ducksPerRound = 6
-let shots = 3
-let score = 0
-let duckColor = ['B','V','R']
-
-
-// Movement Variables
-let duckPhase = 0
-let duckXY = [0 ,0]
+let roundNum = new Image()
+roundNum.src = `individual-assets/round-num-large.png`
 
 // Functions
 // Mouse position inside the canvas system
@@ -130,16 +140,11 @@ const grass = (ctx) => {
 
 const scoreBoard = (ctx) => {
     // Text for R# font, fill, draw text
-    ctx.font = `bolder ${9 / background.height * ctx.canvas.height}px Arial`
-    ctx.fillStyle = `rgba(151, 235, 30, 1)`
-    ctx.fillText(`R = ${round}`, 148.6 / background.width * ctx.canvas.width, 195.5 / background.height * ctx.canvas.height)
+    arcadeText(ctx, `R=${round}`, 8, `rgba(151, 235, 30, 1)`, 149.2, 197, 'left')
 
-    // Text for R# font, fill, draw text
-    ctx.font = `bolder ${10 / background.height * ctx.canvas.height}px Arial`
-    ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    ctx.textAlign = 'right';
-    ctx.fillText(`${score.toString().padStart(6, '0')}`, 365 / background.width * ctx.canvas.width, 212 / background.height * ctx.canvas.height)
-    ctx.fillText(`SCORE`, 365 / background.width * ctx.canvas.width, 220 / background.height * ctx.canvas.height)
+    // To add if condition to draw brown box behind if R>9
+    arcadeText(ctx, `${score.toString().padStart(6, '0')}`, 8, "white", 365, 213, 'right')
+    arcadeText(ctx, `SCORE`, 8, "white", 365, 221, 'right')
 
     // Duck Icons indicating which duck/ducks within the round you are at
     ctx.fillStyle = `white`
@@ -149,19 +154,30 @@ const scoreBoard = (ctx) => {
     ctx.fillStyle = `rgba(54, 176, 255, 1)`
     ctx.fillRect(219 / background.width * ctx.canvas.width * 0.984, 215.45 / background.height * ctx.canvas.height * 0.99, (87.2 * ducksPerRound / 10) / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
 
+    // Display shots board
     displayImage(ctx, shotBoard[shots], 148 / background.width * ctx.canvas.width, 204 / background.height * ctx.canvas.height)
 
+    // Display duck board
     displayImage(ctx, duckBoard, 189 / background.width * ctx.canvas.width, 203 / background.height * ctx.canvas.height)
 
     // Red/white rectangle
 
-    // Ducks/round blue rectangle
+
    
 
 }
 
 // Static game animations ie same animation X position may change
-const dogWalk = () => {
+const dogWalk = (ctx) => {
+    //setInterval({
+        displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
+
+
+        arcadeText(ctx, `ROUND`, 18, "white", 257, 71, 'center')
+        arcadeText(ctx, round, 18, "white", 257, 90, 'center')
+        
+    //},300)
+    // Display Round
     //Dog walk to right
 
     //Dog sniff (move nose two times)
@@ -204,7 +220,16 @@ const displayImage = (ctx, img, x, y) => {
         ctx.drawImage(img, x, y, img.width / background.width * ctx.canvas.width, img.height / background.height * ctx.canvas.height)
 }
 
-
+const arcadeText = (ctx, text, size, color, x, y, align) => {
+    const arcadeFont = new FontFace('pixelFont', 'url(PressStart2P-Regular.ttf)')
+    arcadeFont.load().then(function(font){
+        document.fonts.add(arcadeFont)
+        ctx.fillStyle = color
+        ctx.textAlign = align
+        ctx.font = `${size / background.height * ctx.canvas.height}px pixelFont`
+        ctx.fillText(text, x / background.width * ctx.canvas.width, y / background.height * ctx.canvas.height)
+    })
+}
 
 // When window loads
 window.addEventListener('load', function(event) {
@@ -220,9 +245,12 @@ window.addEventListener('load', function(event) {
     let huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(158 / background.height * ctx.canvas.height)}
 
 
-    displayImage(ctx, duckVD[0], 100, 322)
+    displayImage(ctx, duckVD[0], 240, 100)
     grass(ctx)
     scoreBoard(ctx)
+    dogWalk(ctx)
+
+    
 
 });
 
