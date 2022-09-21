@@ -227,14 +227,36 @@ const dogWalk = (ctx) => {
     //Dog Jump
 }
 
-const dogWDuck= (ctx, x) => {
+const dogWDuck = (ctx, x) => {
     console.log('doggo')
 } 
 
-const duckFall = (color, x, y) => {
+const duckFall = (ctx, color, x, y) => {
+    let timer = 0
+    let fallPhase = 0
+    let fall = setInterval(function(){
+        if(duckXY[1] > 153 / background.height * ctx.canvas.height){
+            clearInterval(fall)
+            dogWDuck(ctx, duckXY[0])
+            return
+        }
 
-    
+        if(timer < 15) {
+            sky(ctx)
+            displayImage(ctx, duckBS, duckXY[0], duckXY[1])
+        } else { 
+            if(fallPhase > 3) {
+                fallPhase = 0
+            }
+            sky(ctx)
+            displayImage(ctx, duckBF[fallPhase], duckXY[0], duckXY[1])
+            grass(ctx)
+            duckXY[1] += 20
+            fallPhase += 1
 
+        }
+        timer++
+    }, 50)
 }
 
 // Game Functions
