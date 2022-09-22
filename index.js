@@ -7,6 +7,8 @@ let score = 0
 let duckColor = ['B','V','R']
 let ctx
 let shotStatus = false
+let ducksShot = 0
+
 
 // Movement Variables
 let duckPhase = 0
@@ -120,6 +122,9 @@ roundNum.src = `individual-assets/round-num-large.png`
 let boardBackground = new Image()
 boardBackground.src = `individual-assets/board-background.png`
 
+let boardBackgroundHollow = new Image()
+boardBackgroundHollow.src = `individual-assets/board-background-hollow.png`
+
 // Functions
 // Mouse position inside the canvas system
 const mousePosition = (ctx) =>{
@@ -146,6 +151,7 @@ const click = (ctx) => {
     if(duckXY [0] < mouseClick[0]  && mouseClick[0] < duckXY [0] + 33 / background.width * ctx.canvas.width && duckXY [1] < mouseClick[1]  && mouseClick[1] < duckXY [0] + 39 / background.width * ctx.canvas.width){
         scoreAdd()
         shotStatus = true
+        ducksShot += 1
     } else {
         console.log(false)
     }
@@ -163,7 +169,11 @@ const grass = (ctx) => {
 }
 
 const scoreBackground = (ctx) => {
-    displayImage(ctx, boardBackground, 0, 188 / background.height * ctx.canvas.height)
+    displayImage(ctx, boardBackground, 0, 166 / background.height * ctx.canvas.height)
+}
+
+const scoreBackgroundHollow = (ctx) => {
+    displayImage(ctx, boardBackgroundHollow, 0, 166 / background.height * ctx.canvas.height)
 }
 
 // const duckRect = (ctx) => {
@@ -172,17 +182,25 @@ const scoreBackground = (ctx) => {
 //     }
 // }
 
-const scoreBoard = (ctx) => {
-    // redisplay board background
-    scoreBackground(ctx)
-
-    // Text for R# font, fill, draw text
-    // If R > 9 draw bigger box under R= first because the text will stretch over
+const roundDisplay = (ctx) => {
     if( round > 9) {
         ctx.fillStyle = `rgba(23, 14, 14, 1)`
     ctx.fillRect(151 / background.width * ctx.canvas.width * 0.984, 190.6 / background.height * ctx.canvas.height * 0.99, 32.5 / background.width * ctx.canvas.width * 0.984, 8.4 / background.height * ctx.canvas.height * 0.99)
     }
     arcadeText(ctx, `R=${round}`, 8, `rgba(151, 235, 30, 1)`, 149.2, 197.4, 'left')
+}
+
+const scoreBoard = (ctx) => {
+    // redisplay board background
+    scoreBackground(ctx)
+    roundDisplay(ctx)
+    // Text for R# font, fill, draw text
+    // If R > 9 draw bigger box under R= first because the text will stretch over
+    // if( round > 9) {
+    //     ctx.fillStyle = `rgba(23, 14, 14, 1)`
+    // ctx.fillRect(151 / background.width * ctx.canvas.width * 0.984, 190.6 / background.height * ctx.canvas.height * 0.99, 32.5 / background.width * ctx.canvas.width * 0.984, 8.4 / background.height * ctx.canvas.height * 0.99)
+    // }
+    // arcadeText(ctx, `R=${round}`, 8, `rgba(151, 235, 30, 1)`, 149.2, 197.4, 'left')
 
     // To add if condition to draw brown box behind if R>9
     arcadeText(ctx, `${score.toString().padStart(6, '0')}`, 8, "white", 365, 213, 'right')
@@ -213,8 +231,6 @@ const scoreAdd = () => {
 const dogWalk = (ctx) => {
     //setInterval({
         displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
-
-
         arcadeText(ctx, `ROUND`, 18, "white", 257, 71, 'center')
         arcadeText(ctx, round, 18, "white", 257, 90, 'center')
         
@@ -222,13 +238,60 @@ const dogWalk = (ctx) => {
     // Display Round
     //Dog walk to right
 
+
     //Dog sniff (move nose two times)
 
     //Dog Jump
 }
 
 const dogWDuck = (ctx, x) => {
+    sky(ctx)
+    grass(ctx)
     console.log('doggo')
+    let downStatus = false
+    let duckHold = ducksShot + 1
+    let dogY = 153
+    let increment = -1
+   
+    if(duckHold === 1){
+        duckXY[0] = 256 / background.height * ctx.canvas.height
+    }
+
+    const dogShow = setInterval(function(){
+        if (downStatus && dogY > 153){
+            clearInterval(dogShow)
+            reset()
+        }
+
+        sky(ctx)
+        displayImage(ctx, dogDuck[duckHold], duckXY[0], dogY / background.height * ctx.canvas.height)
+        scoreBackgroundHollow(ctx)
+        roundDisplay(ctx)
+        //scoreBoard(ctx)
+        grass(ctx)
+
+        if(duckHold < 2){
+            displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
+            arcadeText(ctx, `FLY`, 18, "white", 257, 71, 'center')
+            arcadeText(ctx, `AWAY`, 18, "white", 257, 90, 'center')
+        }
+
+        if(dogY < 114){
+            downStatus = true
+            increment *= (-1)
+        }
+
+        dogY += increment
+
+        if(duckHold === 0){
+            duckHold = 1
+        } else if(duckHold === 1){
+            duckHold = 0
+        }
+
+        console.log(153 / background.height * ctx.canvas.height)
+    }, 50)
+    
 } 
 
 const duckFall = (ctx, color, x, y) => {
@@ -253,7 +316,6 @@ const duckFall = (ctx, color, x, y) => {
             grass(ctx)
             duckXY[1] += 20
             fallPhase += 1
-
         }
         timer++
     }, 50)
@@ -265,12 +327,20 @@ const hunting = (ctx) => {
     //      - Duck Flying --> blink #duck icon
     //      - onClick -->if(shotBoard>3) "fire gun" check collision & shotboard--
     //          -true --> duck fall animation & turn #duck red --> dog pop up animation holding #of duck shot --> update 
+    let time = 200
+    let timer = 0 
     let hunt = setInterval(function(){
         if(shotStatus){
             clearInterval(hunt)
             duckFall(ctx)
             return
         }
+        if(timer > 5000){
+            clearInterval(hunt)
+            dogWDuck(ctx)
+            return
+        }
+
         sky(ctx)
         duckXY[0] += 18
 
@@ -283,8 +353,19 @@ const hunting = (ctx) => {
         if(duckXY[0] > 1000) {
             duckXY[0] = 0
         }
+        timer += time
 
-    }, 500)
+    }, time)
+    duckNum++
+}
+
+const reset = () => {
+    shots = 3
+    shotStatus = false
+    ducksShot = 0
+    duckPhase = 0
+    duckXY = [ , 50]
+    mouseClick = []
 }
 
 // Display fucntions --> Image, text
@@ -304,31 +385,32 @@ const arcadeText = (ctx, text, size, color, x, y, align) => {
     })
 }
 
+ctx = document.getElementById('canvas').getContext('2d')
+ctx.canvas.width = window.innerWidth
+ctx.canvas.height = window.innerWidth/2.14
+ctx.imageSmoothingEnabled = false
 // When window loads
 window.addEventListener('load', function(event) {
-    //CTX area
-    ctx = document.getElementById('canvas').getContext('2d')
     mousePosition(ctx)
     click(ctx)
-    
-    ctx.canvas.width = window.innerWidth
-    ctx.canvas.height = window.innerWidth/2.14
-    ctx.imageSmoothingEnabled = false
-    
     //ctx.canvas.addEventListener('click', clickHit())
     // Define hunt area once ctx is created
-    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(158 / background.height * ctx.canvas.height)}
-
-    //Game functions
-    displayImage(ctx, duckVD[0], 240, 100)
-    grass(ctx)
-    scoreBoard(ctx)
+    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(158 / background.height * ctx.canvas.height)}  
+    //hunting(ctx)  
     dogWalk(ctx)
-    hunting(ctx)
-    
+    scoreBoard(ctx)
+    //displayImage(ctx, duckVD[0], 240, 100)
 })
 
-//ctx.canvas.addEventListener('click', clickHit())
+//hunting(ctx)
+
+
+
+
+//console.log(duckNum)
+
+  
+ 
 
 
 // Game Order:
@@ -351,43 +433,3 @@ window.addEventListener('load', function(event) {
 
 /////////////////////////////////////////////////////////////////////////// 
 // <-----    Hold Area    ----->
-
-// Duck in Motion
-// let duck = setInterval(function(){
-//     base_image1 = new Image()
-//     base_image1.src = duckFlight[duckPhase]
-//     sky(ctx)
-//     ctx.drawImage(base_image1, 200, 100, base_image1.width / background.width * ctx.canvas.width, base_image1.height / background.height * ctx.canvas.height)
-//     duckPhase++
-//     if (duckPhase > 3){duckPhase = 0}
-// }, 500);
-
-
-// Display Board
-// const displayBoard = (ctx, img) => {
-//     base_image = new Image()
-//     base_image.src = img
-//     base_image.onload = function(){
-//         ctx.drawImage(base_image, 0, 0, base_image.width, base_image.height, 148 / background.width * ctx.canvas.width, 203 / background.height * ctx.canvas.height, base_image.width / background.width * ctx.canvas.width, base_image.height / background.height * ctx.canvas.height)
-//     }
-// }
-// displayBoard(ctx, img)
-
-
-// Display Image
-// const displayImage = (ctx, img, x, y) => {
-//     console.log(area)
-//     pic = new Image()
-//     pic.src = img.location
-//     pic.onload = function(){
-//         ctx.drawImage(pic, x, y, pic.width / background.width * ctx.canvas.width, pic.height / background.height * ctx.canvas.height)
-//     }
-// }
-// displayImage(ctx, duckShot, 100, 100)
-
-// Display Sky --- in order to draw over the old sky
-// const sky = (ctx) => {
-//     skyImg = new Image()
-//     skyImg.src = "individual-assets/sky.png"
-//     ctx.drawImage(skyImg, 0, 0, skyImg.width / background.width * ctx.canvas.width, skyImg.height / background.height * ctx.canvas.height)
-// }
