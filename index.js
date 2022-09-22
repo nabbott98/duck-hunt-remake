@@ -10,6 +10,23 @@ let shotStatus = false
 let ducksShot = 0
 let huntActive = false
 
+// Game loop variables
+let time = 200
+let timer = 0
+let ducksReleased = 0
+let gameStatus = 0
+let dogPhase = 1
+let dogWalkX = 0
+let dogWalkY = 145
+let sniff = false
+let dogAlert = false
+let fallPhase = 0
+let downStatus = false
+let duckHold = ducksShot + 1
+let dogY = 153
+let increment = -1
+
+let test = 0
 
 // Movement Variables
 let duckPhase = 0
@@ -200,14 +217,7 @@ const scoreBoard = (ctx) => {
     // redisplay board background
     scoreBackground(ctx)
     roundDisplay(ctx)
-    // Text for R# font, fill, draw text
-    // If R > 9 draw bigger box under R= first because the text will stretch over
-    // if( round > 9) {
-    //     ctx.fillStyle = `rgba(23, 14, 14, 1)`
-    // ctx.fillRect(151 / background.width * ctx.canvas.width * 0.984, 190.6 / background.height * ctx.canvas.height * 0.99, 32.5 / background.width * ctx.canvas.width * 0.984, 8.4 / background.height * ctx.canvas.height * 0.99)
-    // }
-    // arcadeText(ctx, `R=${round}`, 8, `rgba(151, 235, 30, 1)`, 149.2, 197.4, 'left')
-
+    
     // To add if condition to draw brown box behind if R>9
     arcadeText(ctx, `${score.toString().padStart(6, '0')}`, 8, "white", 365, 213, 'right')
     arcadeText(ctx, `SCORE`, 8, "white", 365, 221, 'right')
@@ -234,61 +244,6 @@ const scoreAdd = () => {
     score += 1000
 }
 // Static game animations ie same animation X position may change
-const dogWalk = (ctx) => {
-
-    displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
-    arcadeText(ctx, `ROUND`, 18, "white", 257, 71, 'center')
-    arcadeText(ctx, round, 18, "white", 257, 90, 'center')
-
-    let dogPhase = 1
-    let x = 0
-    let sniff = false
-    let timer = 0
-    const walk = setInterval(function(){
-
-        if(dogPhase > 4){dogPhase = 1}
-
-        if(sniff){
-            clearInterval(walk)
-            return
-        }
-
-        if( x < 180) {
-            grassSky(ctx)
-            displayImage(ctx, dogWalking[dogPhase], x / background.width * ctx.canvas.width, 145 / background.height * ctx.canvas.height)
-            dogPhase++
-            x += 5
-        } else {
-            grassSky(ctx)
-            if(timer === 0){
-                dogPhase = 0
-                console.log('hit')
-            }
-            if(timer > 6){
-                displayImage(ctx, dogWalking[5], 180 / background.width * ctx.canvas.width, 145 / background.height * ctx.canvas.height)
-            } else {
-                displayImage(ctx, dogWalking[dogPhase], 180 / background.width * ctx.canvas.width, 145 / background.height * ctx.canvas.height)
-            }
-
-            if(dogPhase === 0){
-                dogPhase = 1
-            } else if(dogPhase === 1){
-                dogPhase = 0
-            }
-            timer ++
-        }
-
-
-
-    },200)
-    // Display Round
-    //Dog walk to right
-
-
-    //Dog sniff (move nose two times)
-
-    //Dog Jump
-}
 
 const dogWDuck = (ctx, x) => {
     sky(ctx)
@@ -337,17 +292,139 @@ const dogWDuck = (ctx, x) => {
     }, 50)
 } 
 
-const duckFall = (ctx, color, x, y) => {
-    let timer = 0
-    let fallPhase = 0
-    let fall = setInterval(function(){
-        if(duckXY[1] > 153 / background.height * ctx.canvas.height){
-            clearInterval(fall)
-            dogWDuck(ctx, duckXY[0])
+
+// --------------------------------Game Function--------------------------------
+
+// State #
+// 0 - Round entrance Vars
+// 1 - Round start sequence
+// 2 - Hunting vars
+// 3 - Hunting sequence
+// 4 - Duck fall vars
+// 5 - Duck fall seq
+// 6 - Dog w/ Duck vars
+// 7 - Dog w/ Duck sequence
+// 8 - 
+// 9 - 
+
+const hunting = (ctx) => {
+    // 0 Dog walk variables -------------------------------------
+    if(gameStatus === 0){
+        dogPhase = 1
+        dogWalkX = 0
+        sniff = false
+        timer = 0
+
+        // Display round banner
+        displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
+        arcadeText(ctx, `ROUND`, 18, "white", 257, 71, 'center')
+        arcadeText(ctx, round, 18, "white", 257, 90, 'center')
+        gameStatus = 1
+        console.log(`Game status: `, gameStatus)
+    }
+
+    // 1 Round start animation, here comes doggo!----------------
+    if(gameStatus === 1){
+        if(dogPhase > 4){dogPhase = 1}
+
+        if(sniff){
+            clearInterval(walk)
             return
         }
 
-        if(timer < 15) {
+        if( dogWalkX < 180 && !dogAlert) {
+            grassSky(ctx)
+            displayImage(ctx, dogWalking[dogPhase], dogWalkX / background.width * ctx.canvas.width, dogWalkY / background.height * ctx.canvas.height)
+            dogPhase++
+            dogWalkX += 5
+        } 
+
+        if(dogWalkX > 179 ){
+            grassSky(ctx)
+            if(timer === 0){
+                dogPhase = 0
+                console.log('hit')
+            }
+            if(timer > 6){
+                displayImage(ctx, dogWalking[5], 180 / background.width * ctx.canvas.width, (dogWalkY - 3) / background.height * ctx.canvas.height)
+                dogAlert = true
+            } else {
+                displayImage(ctx, dogWalking[dogPhase], 180 / background.width * ctx.canvas.width, dogWalkY / background.height * ctx.canvas.height)
+            }
+
+            if(dogPhase === 0){
+                dogPhase = 1
+            } else if(dogPhase === 1){
+                dogPhase = 0
+            }
+            timer ++
+        }
+
+        // Change this to dog jump animation - when complete ???????????????????????
+        if(dogAlert && timer > 10){
+            gameStatus = 2
+            console.log(`Game status: `, gameStatus)
+            grass(ctx)
+        }
+
+    }
+
+    // 2 Setup variables for duck hunting -----------------------
+    if(gameStatus === 2){
+        huntActive = true
+        gameStatus = 3
+        console.log(`Game status: `, gameStatus)
+        ducksReleased++
+        duckXY = [0,0]
+    }
+
+    // 3 DUCK HUNTING BEGINS!-----------------------------------
+    if(gameStatus === 3 ){
+        // Break Conditions
+        if(shotStatus || timer > 10000){
+            huntActive = false
+            gameStatus = 4
+            console.log(`Game status: `, gameStatus)
+            if(timer > 10000){
+                gameStatus = 6
+                console.log(`Game status: `, gameStatus)
+            }
+        }
+        // Change Canvas
+        sky(ctx)
+        duckXY[0] += 25
+        // create movement function
+        displayImage(ctx, duckBH[duckPhase], duckXY[0], duckXY[1])
+        // This should probably be in the duck render function
+        duckPhase++
+        if (duckPhase > 3){
+            duckPhase = 0
+        }
+        if(duckXY[0] > 1000) {
+            duckXY[0] = 0
+        }
+        timer += time
+    }
+
+    // 4 DUCK FALLING VARS ----------------------------------------
+    if(gameStatus === 4){
+        timer = 0
+        fallPhase = 0
+        gameStatus = 5
+        console.log(`Game status: `, gameStatus)
+    }
+
+    // 5 DUCK FALLING SEQUENCE ------------------------------------
+    if(gameStatus === 5){
+        if(duckXY[1] > 143 / background.height * ctx.canvas.height){
+            scoreBackgroundHollow(ctx)
+            roundDisplay(ctx)
+
+            gameStatus = 6
+            console.log(`Game status: `, gameStatus)
+        }
+
+        if(timer < 4) {
             sky(ctx)
             displayImage(ctx, duckBS, duckXY[0], duckXY[1])
         } else { 
@@ -357,51 +434,83 @@ const duckFall = (ctx, color, x, y) => {
             sky(ctx)
             displayImage(ctx, duckBF[fallPhase], duckXY[0], duckXY[1])
             grass(ctx)
-            duckXY[1] += 20
+            duckXY[1] += 40
             fallPhase += 1
         }
-        timer++
-    }, 50)
-}
+        timer++ 
+    }
 
-// Game Functions
-const hunting = (ctx) => {
-    //-Duck loop --> Ducks 1-10 (Loop ten times through)
-    //      - Duck Flying --> blink #duck icon
-    //      - onClick -->if(shotBoard>3) "fire gun" check collision & shotboard--
-    //          -true --> duck fall animation & turn #duck red --> dog pop up animation holding #of duck shot --> update 
-    huntActive = true
-    let time = 200
-    let timer = 0 
-    let hunt = setInterval(function(){
-        if(shotStatus){
-            huntActive = false
-            clearInterval(hunt)
-            duckFall(ctx)
-            return
+    // 6 Dog W Duck Variables ------------------------------------
+    if(gameStatus === 6){
+        sky(ctx)
+        grass(ctx)
+        downStatus = false
+        duckHold = ducksShot + 1
+        dogY = 153
+        increment = -5
+
+        if(duckXY[0] > 95 / background.width * ctx.canvas.width && duckXY[0] <= 145 / background.width * ctx.canvas.width) {
+            duckXY[0] = 94 / background.width * ctx.canvas.width
+        } else if(duckXY[0] > 145 / background.width * ctx.canvas.width && duckXY[0] < 195 / background.width * ctx.canvas.width){
+            duckXY[0] = 195 / background.width * ctx.canvas.width
         }
-        if(timer > 10000){
-            clearInterval(hunt)
-            dogWDuck(ctx)
-            return
+
+        if(duckHold === 1){
+            duckXY[0] = 256 / background.width * ctx.canvas.width
+        }
+
+        gameStatus = 7
+        console.log(`Game status: `, gameStatus)
+    }
+    // 7 Dog w duck animation ------------------------------------
+    if(gameStatus === 7){
+        if (downStatus && dogY > 153){
+            gameStatus = 10
+            console.log(`Game status: `, gameStatus)
         }
 
         sky(ctx)
-        duckXY[0] += 25
-        // create movement function
+        displayImage(ctx, dogDuck[duckHold], duckXY[0], dogY / background.height * ctx.canvas.height)
+        scoreBackgroundHollow(ctx)
+        grass(ctx)
 
-        displayImage(ctx, duckBH[duckPhase], duckXY[0], duckXY[1])
-
-        duckPhase++
-        if (duckPhase > 3){
-            duckPhase = 0
-        }
-        if(duckXY[0] > 1000) {
-            duckXY[0] = 0
+        if(duckHold < 2){
+            displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
+            arcadeText(ctx, `FLY`, 18, "white", 257, 71, 'center')
+            arcadeText(ctx, `AWAY`, 18, "white", 257, 90, 'center')
         }
 
-        timer += time
-    }, time)
+        if(dogY < 114){
+            downStatus = true
+            increment *= (-1)
+        }
+
+        dogY += increment
+
+        if(duckHold === 0){
+            duckHold = 1
+        } else if(duckHold === 1){
+            duckHold = 0
+        }
+    }
+
+    // 10 - Test to see how many ducks have been released, if 10 new round if not gamestatus 2
+    if(gameStatus === 10){
+        console.log(ducksReleased)
+        reset()
+        if (ducksReleased === 10){
+            ducksReleased = 0
+            gameStatus = 0
+            round++
+        }
+
+        if(ducksReleased < 10){
+            gameStatus = 2
+            console.log(`Game status: `, gameStatus)
+        } 
+    }
+    //test++
+    //console.log(test)
 }
 
 const reset = () => {
@@ -409,7 +518,7 @@ const reset = () => {
     shotStatus = false
     ducksShot = 0
     duckPhase = 0
-    duckXY = [ , 50]
+    duckXY = [0, 50]
     mouseClick = []
     console.log('reset')
     scoreBoard(ctx)
@@ -436,24 +545,31 @@ ctx = document.getElementById('canvas').getContext('2d')
 ctx.canvas.width = window.innerWidth
 ctx.canvas.height = window.innerWidth/2.14
 ctx.imageSmoothingEnabled = false
+grass(ctx)
 // When window loads
 window.addEventListener('load', function(event) {
     mousePosition(ctx)
     click(ctx)
-    //ctx.canvas.addEventListener('click', clickHit())
     // Define hunt area once ctx is created
     huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(158 / background.height * ctx.canvas.height)}  
-    //hunting(ctx)  
-
     scoreBoard(ctx)
     //displayImage(ctx, duckVD[0], 240, 100)
 })
-//dogWalk(ctx)
-
-hunting(ctx)
 
 
-setTimeout(hunting(ctx), 2000)
+
+const gameLoop = setInterval(hunting, time, ctx)
+
+
+
+
+
+
+
+
+
+
+
 
 // before we do this make ducks a class nd refactor hunting to create a new duck object
 

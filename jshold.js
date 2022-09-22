@@ -1,9 +1,6 @@
-if(timer = 0){
-    dogPhase = 0
+
+const hello = (input) => {
+    console.log(input)
 }
 
-if(duckPhase === 0){
-    duckHold = 1
-} else if(duckHold === 1){
-    duckHold = 0
-}
+const hi = setInterval(hello, 500, 'hiiiiii')
