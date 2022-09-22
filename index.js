@@ -8,6 +8,7 @@ let duckColor = ['B','V','R']
 let ctx
 let shotStatus = false
 let ducksShot = 0
+let huntActive = false
 
 
 // Movement Variables
@@ -116,6 +117,9 @@ skyImg.src = `individual-assets/sky.png`
 let grassImg = new Image()
 grassImg.src = `individual-assets/grass.png`
 
+let grassSkyImg = new Image()
+grassSkyImg.src = `individual-assets/grass-sky.png`
+
 let roundNum = new Image()
 roundNum.src = `individual-assets/round-num-large.png`
 
@@ -139,23 +143,25 @@ const mousePosition = (ctx) =>{
 
 const click = (ctx) => {
     ctx.canvas.addEventListener('click', function(event){
-    let mouseX = event.clientX - ctx.canvas.offsetLeft
-    let mouseY = event.clientY - ctx.canvas.offsetTop
-    //alert(mouseX+" | "+mouseY)
-    mouseClick = [mouseX, mouseY]
-    
-    shots--
+    if (huntActive){
+        let mouseX = event.clientX - ctx.canvas.offsetLeft
+        let mouseY = event.clientY - ctx.canvas.offsetTop
+        //alert(mouseX+" | "+mouseY)
+        mouseClick = [mouseX, mouseY]
+        
+        shots--
 
 
-    // Test Collision
-    if(duckXY [0] < mouseClick[0]  && mouseClick[0] < duckXY [0] + 33 / background.width * ctx.canvas.width && duckXY [1] < mouseClick[1]  && mouseClick[1] < duckXY [0] + 39 / background.width * ctx.canvas.width){
-        scoreAdd()
-        shotStatus = true
-        ducksShot += 1
-    } else {
-        console.log(false)
+        // Test Collision
+        if(duckXY [0] < mouseClick[0]  && mouseClick[0] < duckXY [0] + 33 / background.width * ctx.canvas.width && duckXY [1] < mouseClick[1]  && mouseClick[1] < duckXY [0] + 39 / background.width * ctx.canvas.width){
+            scoreAdd()
+            shotStatus = true
+            ducksShot += 1
+        } else {
+            console.log(false)
+        }
+        scoreBoard(ctx)
     }
-    scoreBoard(ctx)
 })
 }
 
@@ -166,6 +172,10 @@ const sky = (ctx) => {
 
 const grass = (ctx) => {
     displayImage(ctx, grassImg, 0, 146 / background.height * ctx.canvas.height)
+}
+
+const grassSky = (ctx) => {
+    displayImage(ctx, grassSkyImg, 0, 134 / background.height * ctx.canvas.height)
 }
 
 const scoreBackground = (ctx) => {
@@ -229,12 +239,52 @@ const scoreAdd = () => {
 }
 // Static game animations ie same animation X position may change
 const dogWalk = (ctx) => {
-    //setInterval({
-        displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
-        arcadeText(ctx, `ROUND`, 18, "white", 257, 71, 'center')
-        arcadeText(ctx, round, 18, "white", 257, 90, 'center')
-        
-    //},300)
+
+    displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
+    arcadeText(ctx, `ROUND`, 18, "white", 257, 71, 'center')
+    arcadeText(ctx, round, 18, "white", 257, 90, 'center')
+
+    let dogPhase = 1
+    let x = 0
+    let sniff = false
+    let timer = 0
+    const walk = setInterval(function(){
+
+        if(dogPhase > 4){dogPhase = 1}
+
+        if(sniff){
+            clearInterval(walk)
+            return
+        }
+
+        if( x < 180) {
+            grassSky(ctx)
+            displayImage(ctx, dogWalking[dogPhase], x / background.width * ctx.canvas.width, 145 / background.height * ctx.canvas.height)
+            dogPhase++
+            x += 5
+        } else {
+            grassSky(ctx)
+            if(timer === 0){
+                dogPhase = 0
+                console.log('hit')
+            }
+            if(timer > 6){
+                displayImage(ctx, dogWalking[5], 180 / background.width * ctx.canvas.width, 145 / background.height * ctx.canvas.height)
+            } else {
+                displayImage(ctx, dogWalking[dogPhase], 180 / background.width * ctx.canvas.width, 145 / background.height * ctx.canvas.height)
+            }
+
+            if(dogPhase === 0){
+                dogPhase = 1
+            } else if(dogPhase === 1){
+                dogPhase = 0
+            }
+            timer ++
+        }
+
+
+
+    },200)
     // Display Round
     //Dog walk to right
 
@@ -288,8 +338,6 @@ const dogWDuck = (ctx, x) => {
         } else if(duckHold === 1){
             duckHold = 0
         }
-
-        console.log(153 / background.height * ctx.canvas.height)
     }, 50)
     
 } 
@@ -327,15 +375,17 @@ const hunting = (ctx) => {
     //      - Duck Flying --> blink #duck icon
     //      - onClick -->if(shotBoard>3) "fire gun" check collision & shotboard--
     //          -true --> duck fall animation & turn #duck red --> dog pop up animation holding #of duck shot --> update 
+    huntActive = true
     let time = 200
     let timer = 0 
     let hunt = setInterval(function(){
         if(shotStatus){
+            huntActive = false
             clearInterval(hunt)
             duckFall(ctx)
             return
         }
-        if(timer > 5000){
+        if(timer > 1000){
             clearInterval(hunt)
             dogWDuck(ctx)
             return
@@ -356,7 +406,6 @@ const hunting = (ctx) => {
         timer += time
 
     }, time)
-    duckNum++
 }
 
 const reset = () => {
@@ -366,6 +415,8 @@ const reset = () => {
     duckPhase = 0
     duckXY = [ , 50]
     mouseClick = []
+    console.log('reset')
+    scoreBoard(ctx)
 }
 
 // Display fucntions --> Image, text
