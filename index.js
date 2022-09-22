@@ -143,23 +143,19 @@ const mousePosition = (ctx) =>{
 
 const click = (ctx) => {
     ctx.canvas.addEventListener('click', function(event){
-    if (huntActive){
+    if (huntActive && shots > 0){
         let mouseX = event.clientX - ctx.canvas.offsetLeft
         let mouseY = event.clientY - ctx.canvas.offsetTop
         //alert(mouseX+" | "+mouseY)
         mouseClick = [mouseX, mouseY]
-        
         shots--
-
 
         // Test Collision
         if(duckXY [0] < mouseClick[0]  && mouseClick[0] < duckXY [0] + 33 / background.width * ctx.canvas.width && duckXY [1] < mouseClick[1]  && mouseClick[1] < duckXY [0] + 39 / background.width * ctx.canvas.width){
             scoreAdd()
             shotStatus = true
             ducksShot += 1
-        } else {
-            console.log(false)
-        }
+        } 
         scoreBoard(ctx)
     }
 })
@@ -339,7 +335,6 @@ const dogWDuck = (ctx, x) => {
             duckHold = 0
         }
     }, 50)
-    
 } 
 
 const duckFall = (ctx, color, x, y) => {
@@ -385,14 +380,15 @@ const hunting = (ctx) => {
             duckFall(ctx)
             return
         }
-        if(timer > 1000){
+        if(timer > 10000){
             clearInterval(hunt)
             dogWDuck(ctx)
             return
         }
 
         sky(ctx)
-        duckXY[0] += 18
+        duckXY[0] += 25
+        // create movement function
 
         displayImage(ctx, duckBH[duckPhase], duckXY[0], duckXY[1])
 
@@ -403,8 +399,8 @@ const hunting = (ctx) => {
         if(duckXY[0] > 1000) {
             duckXY[0] = 0
         }
-        timer += time
 
+        timer += time
     }, time)
 }
 
@@ -448,17 +444,34 @@ window.addEventListener('load', function(event) {
     // Define hunt area once ctx is created
     huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(158 / background.height * ctx.canvas.height)}  
     //hunting(ctx)  
-    dogWalk(ctx)
+
     scoreBoard(ctx)
     //displayImage(ctx, duckVD[0], 240, 100)
 })
+//dogWalk(ctx)
 
-//hunting(ctx)
+hunting(ctx)
 
 
+setTimeout(hunting(ctx), 2000)
 
+// before we do this make ducks a class nd refactor hunting to create a new duck object
 
-//console.log(duckNum)
+// ?
+// Make main main game loop to manage all my game animations and timings together
+// ?
+
+// This looks like: a setInterval function that calls a very long game loop function every 500ms
+// Our main game loop function starts by clearing the entire board and then starts rendering all of the basic game assets 
+// Runs our game logic move functions and
+// we can use arrays to make rendering this large collection of assets easier/ more dry with iteration methods
+// for example
+// we can have a ducks array tht represents all of the active ducks which we will render for every game loop at the locked in time
+// when a new duck starts to be hunted we push it into the array and when duck is no longer active ( shot or time ran out) we remove it from the array
+// 
+
+// implementing this game loop with standardize the time across all of the game logic, but require removing redundant code from our many render functions
+
 
   
  
