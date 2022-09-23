@@ -621,7 +621,7 @@ const displayImage = (ctx, img, x, y) => {
 
 // Custom text font from google fonts 
 const arcadeText = (ctx, text, size, color, x, y, align) => {
-    const arcadeFont = new FontFace('pixelFont', 'url(PressStart2P-Regular.ttf)')
+    const arcadeFont = new FontFace('pixelFont', 'url(other-assets/PressStart2P-Regular.ttf)')
     arcadeFont.load().then(function(font){
         document.fonts.add(arcadeFont)
         ctx.fillStyle = color
