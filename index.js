@@ -4,16 +4,16 @@ let huntArea
 let round = 1
 let shots = 3
 let score = 0
-let duckColor = ['B','V','R']
+let duckColor = null
 let ctx
 let shotStatus = false
 let ducksShot = 0
 let huntActive = false
 
 // Game loop variables
-let time = 200
+let time = 100
 let timer = 0
-let ducksReleased = 9
+let ducksReleased = 0
 let gameStatus = 0
 let dogPhase = 1
 let dogWalkX = 0
@@ -25,6 +25,7 @@ let downStatus = false
 let duckHold = ducksShot + 1
 let dogY = 153
 let increment = -1
+let ducksShotRound = 0
 
 let test = 0
 
@@ -175,6 +176,7 @@ const click = (ctx) => {
             scoreAdd()
             shotStatus = true
             ducksShot += 1
+            ducksShotRound ++
         } 
         scoreBoard(ctx)
     }
@@ -249,7 +251,7 @@ const scoreBoard = (ctx) => {
 }
 
 const scoreAdd = () => {
-    score += 1000
+    score += 1000 // colorScore[ducksArr[#].color][round]
 }
 
 // --------------------------------Game Function--------------------------------
@@ -298,7 +300,7 @@ const hunting = (ctx) => {
             grassSky(ctx)
             displayImage(ctx, dogWalking[dogPhase], dogWalkX / background.width * ctx.canvas.width, dogWalkY / background.height * ctx.canvas.height)
             dogPhase++
-            dogWalkX += 5
+            dogWalkX += 50
         } 
 
         if(dogWalkX > 179 ){
@@ -356,7 +358,9 @@ const hunting = (ctx) => {
         }
         // Change Canvas
         sky(ctx)
-        duckXY[0] += 25
+        duckXY[0] += 5 / background.width * ctx.canvas.width
+        
+        
         // create movement function
         displayImage(ctx, duckBH[duckPhase], duckXY[0], duckXY[1])
         // This should probably be in the duck render function
@@ -364,7 +368,9 @@ const hunting = (ctx) => {
         if (duckPhase > 3){
             duckPhase = 0
         }
-        if(duckXY[0] > 1000) {
+
+        if(duckXY[0] > 512 / background.width * ctx.canvas.width) {
+           
             duckXY[0] = 0
         }
         timer += time
@@ -463,12 +469,12 @@ const hunting = (ctx) => {
     // 10 - Test to see how many ducks have been released, if 10 new round if not gamestatus 2
     if(gameStatus === 10){
         console.log(ducksReleased)
-        reset()
         if (ducksReleased === 10){
-            if(ducksShot >= ducksPerRound[round]){
+            if(ducksShotRound >= ducksPerRound[round]){
                 ducksReleased = 0
                 gameStatus = 0
                 round++
+                ducksShotRound = 0
             } else {
                 clearInterval(gameLoop)
                 displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
@@ -480,6 +486,7 @@ const hunting = (ctx) => {
             gameStatus = 2
             console.log(`Game status: `, gameStatus)
         } 
+        reset()
     }
     //test++
     //console.log(test)
@@ -487,8 +494,8 @@ const hunting = (ctx) => {
 
 const reset = () => {
     shots = 3
-    shotStatus = false
     ducksShot = 0
+    shotStatus = false
     duckPhase = 0
     duckXY = [0, 50]
     mouseClick = []
@@ -524,13 +531,13 @@ window.addEventListener('load', function(event) {
     mousePosition(ctx)
     click(ctx)
     // Define hunt area once ctx is created
-    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(158 / background.height * ctx.canvas.height)}  
+    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(118 / background.height * ctx.canvas.height)}  
     scoreBoard(ctx)
     //displayImage(ctx, duckVD[0], 240, 100)
 })
 
 
-
+s
 const gameLoop = setInterval(hunting, time, ctx)
 
 
