@@ -53,36 +53,65 @@ let hitDuck = [false, false, false, false, false, false, false, false, false, fa
 // Import flying ducks -- I had to do most of the importing by hardcoding :(
     // I tried to use a 3d array to store all the ducks but I could nto get it to work
 //Import Flying Ducks and falling ducks
-let duckBH = []
-let duckVH = []
-let duckRH = []
 
-let duckBD = []
-let duckVD = []
-let duckRD = []
+let duckBR = []
+let duckVR = []
+let duckRR = []
+
+let duckBL = []
+let duckVL = []
+let duckRL = []
+
+let duckBDR = []
+let duckVDR = []
+let duckRDR = []
+
+let duckBDL = []
+let duckVDL = []
+let duckRDL = []
 
 let duckBF = []
 let duckVF = []
 let duckRF = []
 
+//Import flying ducks
+
 for(let i = 0; i < 4; i++){
-    duckBH[i] = new Image()
-    duckBH[i].src = `individual-assets/duck-flight-b-h-${i+1}.png`
+    duckBR[i] = new Image()
+    duckBR[i].src = `individual-assets/duck-flight-b-h-${i+1}.png`
 
-    duckVH[i] = new Image()
-    duckVH[i].src = `individual-assets/duck-flight-v-h-${i+1}.png`
+    duckVR[i] = new Image()
+    duckVR[i].src = `individual-assets/duck-flight-v-h-${i+1}.png`
 
-    duckRH[i] = new Image()
-    duckRH[i].src = `individual-assets/duck-flight-r-h-${i+1}.png`
+    duckRR[i] = new Image()
+    duckRR[i].src = `individual-assets/duck-flight-r-h-${i+1}.png`
 
-    duckBD[i] = new Image()
-    duckBD[i].src = `individual-assets/duck-flight-b-d-${i+1}.png`
+    duckBDR[i] = new Image()
+    duckBDR[i].src = `individual-assets/duck-flight-b-d-${i+1}.png`
 
-    duckVD[i] = new Image()
-    duckVD[i].src = `individual-assets/duck-flight-v-d-${i+1}.png`
+    duckVDR[i] = new Image()
+    duckVDR[i].src = `individual-assets/duck-flight-v-d-${i+1}.png`
 
-    duckRD[i] = new Image()
-    duckRD[i].src = `individual-assets/duck-flight-r-d-${i+1}.png`
+    duckRDR[i] = new Image()
+    duckRDR[i].src = `individual-assets/duck-flight-r-d-${i+1}.png`
+
+    duckBL[i] = new Image()
+    duckBL[i].src = `individual-assets/flip/duck-flight-b-h-${i+1}.png`
+
+    duckVL[i] = new Image()
+    duckVL[i].src = `individual-assets/flip/duck-flight-v-h-${i+1}.png`
+
+    duckRL[i] = new Image()
+    duckRL[i].src = `individual-assets/flip/duck-flight-r-h-${i+1}.png`
+
+    duckBDL[i] = new Image()
+    duckBDL[i].src = `individual-assets/flip/duck-flight-b-d-${i+1}.png`
+
+    duckVDL[i] = new Image()
+    duckVDL[i].src = `individual-assets/flip/duck-flight-v-d-${i+1}.png`
+
+    duckRDL[i] = new Image()
+    duckRDL[i].src = `individual-assets/flip/duck-flight-r-d-${i+1}.png`
 
     duckBF[i] = new Image()
     duckBF[i].src = `individual-assets/duck-flight-b-f-${i+1}.png`
@@ -94,19 +123,28 @@ for(let i = 0; i < 4; i++){
     duckRF[i].src = `individual-assets/duck-flight-r-f-${i+1}.png`
 }
 
-// Import Shot Ducks
-let duckBS
-let duckVS
-let duckRS
+// Import shot ducks
+let duckBS = []
+let duckVS = []
+let duckRS = []
 
-duckBS = new Image()
-duckBS.src = `individual-assets/duck-flight-b-s-1.png`
+duckBS[0] = new Image()
+duckBS[0].src = `individual-assets/duck-flight-b-s-1.png`
 
-duckVS = new Image()
-duckVS.src = `individual-assets/duck-flight-v-s-1.png`
+duckVS[0] = new Image()
+duckVS[0].src = `individual-assets/duck-flight-v-s-1.png`
 
-duckRS = new Image()
-duckRS.src = `individual-assets/duck-flight-r-s-1.png`
+duckRS[0] = new Image()
+duckRS[0].src = `individual-assets/duck-flight-r-s-1.png`
+
+// Add all duck types to respective color
+const brownDuck = [duckBL, duckBR, duckBDL, duckBDR, duckBS, duckBF]
+const violetDuck = [duckVL, duckVR, duckVDL, duckVDR, duckVS, duckVF]
+const redDuck = [duckRL, duckRR, duckRDL, duckRDR, duckRS, duckRF]
+
+// Add all duck color arrays to big duck array
+const duckImgs = [brownDuck, violetDuck, redDuck]
+
 
 // Import dogs with duck and shot board assets
 let dogDuck = []
@@ -151,6 +189,78 @@ let flyAwayImg = new Image()
 flyAwayImg.src = `individual-assets/fly-away.png`
 
 // Functions
+ducksArr = []
+
+class duck {
+    constructor(color, x, xDirection, yDirection){
+        this.alive = true
+        this.color = color
+        this.x = x
+        this.y = 147 / background.height * ctx.canvas.height
+        this.xDirection = xDirection
+        this.yDirection = yDirection
+        this.img
+        this.phase = 0
+    }
+}
+
+const birth = () => {
+    colorRan = Math.ceil(Math.random() * 20)
+    if (colorRan > 17){
+        color = 2
+    } else if (colorRan > 12){
+        color = 1
+    } else {
+        color = 0
+    }
+    x = (85+ Math.floor(Math.random() * 342)) / background.width * 1920
+    xDirection = ((Math.random() < 0.5 ? -1 : 1) * Math.ceil(Math.random()) * 5) / background.width * ctx.canvas.width
+    yDirection = (Math.ceil(Math.random()) * 5) / background.height * ctx.canvas.height
+    newDuck = new duck(color, x, xDirection, yDirection)
+    ducksArr.push(newDuck)
+}
+
+const movement = () => {
+    ducksArr.forEach(element => {
+        if(element.x < huntArea.left || element.x > huntArea.right){
+            element.xDirection *= -1
+        }
+
+        if(element.y > huntArea.bottom || element.y < huntArea.top){
+            element.yDirection *= -1
+        }
+        element.phase++
+        if (element.phase > 3){
+            element.phase = 0
+        }
+
+
+        element.x += element.xDirection
+        element.y -= element.yDirection 
+    });
+}
+
+const duckImg = () => {
+    ducksArr.forEach(element => {
+        if(Math.abs(element.yDirection) >= Math.abs(element.xDirection)){
+            direction = 2
+        } else {
+            direction = 0
+        }
+
+        if (element.xDirection > 0){
+            direction ++
+        }
+        
+        element.img = duckImgs[color][direction][element.phase]
+    })
+}
+
+
+
+
+
+
 // Mouse position inside the canvas system
 const mousePosition = (ctx) =>{
     ctx.canvas.addEventListener('mousemove', function(event){
@@ -172,13 +282,15 @@ const click = (ctx) => {
         shots--
 
         // Test Collision
-        if(duckXY [0] < mouseClick[0]  && mouseClick[0] < duckXY [0] + 33 / background.width * ctx.canvas.width && duckXY [1] < mouseClick[1]  && mouseClick[1] < duckXY [0] + 39 / background.width * ctx.canvas.width){
-            scoreAdd()
-            shotStatus = true
-            ducksShot += 1
-            ducksShotRound ++
-        } 
-        scoreBoard(ctx)
+        ducksArr.forEach(element => {
+            if(element.x < mouseClick[0]  && mouseClick[0] < element.x + 33 / background.width * ctx.canvas.width && element.y < mouseClick[1]  && mouseClick[1] < element.y + 39 / background.width * ctx.canvas.width){
+                scoreAdd()
+                shotStatus = true
+                ducksShot += 1
+                ducksShotRound ++
+            } 
+        }) 
+            scoreBoard(ctx)
     }
 })
 }
@@ -251,7 +363,7 @@ const scoreBoard = (ctx) => {
 }
 
 const scoreAdd = () => {
-    score += 1000 // colorScore[ducksArr[#].color][round]
+    score += colorScore[ducksArr[0].color][round] // colorScore[ducksArr[#].color][round]
 }
 
 // --------------------------------Game Function--------------------------------
@@ -307,7 +419,6 @@ const hunting = (ctx) => {
             grassSky(ctx)
             if(timer === 0){
                 dogPhase = 0
-                console.log('hit')
             }
             if(timer > 6){
                 displayImage(ctx, dogWalking[5], 180 / background.width * ctx.canvas.width, (dogWalkY - 3) / background.height * ctx.canvas.height)
@@ -341,6 +452,7 @@ const hunting = (ctx) => {
         ducksReleased++
         timer = 0
         duckXY = [0,0]
+        birth()
     }
 
     // 3 DUCK HUNTING BEGINS!-----------------------------------
@@ -356,23 +468,21 @@ const hunting = (ctx) => {
                 console.log(`Game status: `, gameStatus)
             }
         }
+        movement(ctx)
         // Change Canvas
-        sky(ctx)
-        duckXY[0] += 5 / background.width * ctx.canvas.width
-        
-        
-        // create movement function
-        displayImage(ctx, duckBH[duckPhase], duckXY[0], duckXY[1])
-        // This should probably be in the duck render function
-        duckPhase++
-        if (duckPhase > 3){
-            duckPhase = 0
-        }
 
-        if(duckXY[0] > 512 / background.width * ctx.canvas.width) {
-           
-            duckXY[0] = 0
-        }
+        sky(ctx)
+        duckImg()
+
+        
+        ducksArr.forEach(element => {
+            displayImage(ctx, element.img, element.x , element.y)
+        })
+        grass(ctx)
+        // create movement function
+     
+        // This should probably be in the duck render function
+
         timer += time
     }
 
@@ -386,7 +496,7 @@ const hunting = (ctx) => {
 
     // 5 DUCK FALLING SEQUENCE ------------------------------------
     if(gameStatus === 5){
-        if(duckXY[1] > 143 / background.height * ctx.canvas.height){
+        if(ducksArr[0].y > 143 / background.height * ctx.canvas.height){
             scoreBackgroundHollow(ctx)
             roundDisplay(ctx)
 
@@ -396,17 +506,19 @@ const hunting = (ctx) => {
 
         if(timer < 4) {
             sky(ctx)
-            displayImage(ctx, duckBS, duckXY[0], duckXY[1])
+            displayImage(ctx, duckImgs[ducksArr[0].color][4][0], ducksArr[0].x, ducksArr[0].y)
         } else { 
             if(fallPhase > 3) {
                 fallPhase = 0
             }
             sky(ctx)
-            displayImage(ctx, duckBF[fallPhase], duckXY[0], duckXY[1])
+            displayImage(ctx, duckImgs[ducksArr[0].color][5][fallPhase], ducksArr[0].x, ducksArr[0].y)
             grass(ctx)
-            duckXY[1] += 40
+            ducksArr[0].y += 40
             fallPhase += 1
         }
+
+
         timer++ 
     } 
 
@@ -420,14 +532,14 @@ const hunting = (ctx) => {
         increment = -5
 
         // Avoid drawing over r=# 
-        if(duckXY[0] > 95 / background.width * ctx.canvas.width && duckXY[0] <= 145 / background.width * ctx.canvas.width) {
-            duckXY[0] = 94 / background.width * ctx.canvas.width
-        } else if(duckXY[0] > 145 / background.width * ctx.canvas.width && duckXY[0] < 195 / background.width * ctx.canvas.width){
-            duckXY[0] = 195 / background.width * ctx.canvas.width
+        if(ducksArr[0].x > 95 / background.width * ctx.canvas.width && ducksArr[0].x <= 145 / background.width * ctx.canvas.width) {
+            ducksArr[0].x = 94 / background.width * ctx.canvas.width
+        } else if(ducksArr[0].x > 145 / background.width * ctx.canvas.width && ducksArr[0].x < 195 / background.width * ctx.canvas.width){
+            ducksArr[0].x = 195 / background.width * ctx.canvas.width
         }
 
         if(duckHold === 1){
-            duckXY[0] = 256 / background.width * ctx.canvas.width
+            ducksArr[0].x = 256 / background.width * ctx.canvas.width
         }
 
         gameStatus = 7
@@ -441,7 +553,7 @@ const hunting = (ctx) => {
         }
 
         sky(ctx)
-        displayImage(ctx, dogDuck[duckHold], duckXY[0], dogY / background.height * ctx.canvas.height)
+        displayImage(ctx, dogDuck[duckHold], ducksArr[0].x, dogY / background.height * ctx.canvas.height)
         scoreBackgroundHollow(ctx)
         grass(ctx)
 
@@ -452,7 +564,7 @@ const hunting = (ctx) => {
             // arcadeText(ctx, `AWAY`, 18, "white", 257, 90, 'center')
         }
 
-        if(dogY < 114){
+        if(dogY < 120){
             downStatus = true
             increment *= (-1)
         }
@@ -468,7 +580,6 @@ const hunting = (ctx) => {
 
     // 10 - Test to see how many ducks have been released, if 10 new round if not gamestatus 2
     if(gameStatus === 10){
-        console.log(ducksReleased)
         if (ducksReleased === 10){
             if(ducksShotRound >= ducksPerRound[round]){
                 ducksReleased = 0
@@ -499,9 +610,8 @@ const reset = () => {
     duckPhase = 0
     duckXY = [0, 50]
     mouseClick = []
-    console.log('ducks shot: ',ducksShot)
-    console.log('reset')
     scoreBoard(ctx)
+    ducksArr.pop()
 }
 
 // Display fucntions --> Image, text
@@ -531,13 +641,13 @@ window.addEventListener('load', function(event) {
     mousePosition(ctx)
     click(ctx)
     // Define hunt area once ctx is created
-    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(118 / background.height * ctx.canvas.height)}  
+    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(148 / background.height * ctx.canvas.height)}  
     scoreBoard(ctx)
     //displayImage(ctx, duckVD[0], 240, 100)
 })
 
 
-s
+
 const gameLoop = setInterval(hunting, time, ctx)
 
 
