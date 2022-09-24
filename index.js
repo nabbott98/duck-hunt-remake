@@ -28,6 +28,7 @@ let increment = -1
 let perfectTimer = 0
 let test = 0
 let red = false
+let dogJump = false
 
 // Movement Variables
 let duckPhase = 0
@@ -157,7 +158,7 @@ for (let i = 0; i < 4; i++){
 }
 
 let dogWalking = []
-for (let i = 0; i < 7; i++){
+for (let i = 0; i < 8; i++){
     dogWalking[i] = new Image()
     dogWalking[i].src = `individual-assets/dog-walk-${i+1}.png`
 }
@@ -196,7 +197,7 @@ class duck {
         this.alive = true
         this.color = color
         this.x = x
-        this.y = 147 / background.height * ctx.canvas.height
+        this.y = 143 / background.height * ctx.canvas.height
         this.xDirection = xDirection
         this.yDirection = yDirection
         this.img
@@ -256,11 +257,6 @@ const duckImg = () => {
     })
 }
 
-
-
-
-
-
 // Mouse position inside the canvas system
 const mousePosition = (ctx) =>{
     ctx.canvas.addEventListener('mousemove', function(event){
@@ -288,7 +284,6 @@ const click = (ctx) => {
                 element.alive = false
                 shotStatus = true
                 ducksShot += 1
-                console.log('collision ', i)
                 hitDuck[ducksReleased - 1 - i] = true
             } 
         }) 
@@ -321,13 +316,6 @@ const scoreBackgroundHollow = (ctx) => {
 const flyAway = (ctx) => {
     displayImage(ctx, flyAwayImg, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
 }
-
-
-// const duckRect = (ctx) => {
-//     for(let i = 0; i < 10; i++){
-//         // Test if a duck was hit
-//     }
-// }
 
 const roundDisplay = (ctx) => {
     if( round > 9) {
@@ -376,7 +364,6 @@ const scoreAdd = () => {
 }
 
 // --------------------------------Game Function--------------------------------
-
 // State #
 // 0 - Round entrance Vars
 // 1 - Round start sequence
@@ -386,8 +373,9 @@ const scoreAdd = () => {
 // 5 - Duck fall seq
 // 6 - Dog w/ Duck vars
 // 7 - Dog w/ Duck sequence
-// 8 - 
-// 9 - 
+// 8 - Perfect Score setup
+// 9 - Flash duck Icons
+// 10 - Round end reset
 
 const hunting = (ctx) => {
     // 0 Dog walk variables -------------------------------------
@@ -397,6 +385,7 @@ const hunting = (ctx) => {
         sniff = false
         timer = 0
         dogAlert = false
+        dogJump = false
 
         // Display round banner
         scoreBoard(ctx)
@@ -405,17 +394,13 @@ const hunting = (ctx) => {
         arcadeText(ctx, `ROUND`, 18, "white", 257, 71, 'center')
         arcadeText(ctx, round, 18, "white", 257, 90, 'center')
         gameStatus = 1
-        console.log(`Game status: `, gameStatus)
     }
 
     // 1 Round start animation, here comes doggo!----------------
     if(gameStatus === 1){
-        if(dogPhase > 4){dogPhase = 1}
-
-        // if(sniff){
-        //     clearInterval(walk)
-        //     return
-        // }
+        if(dogPhase > 4){
+            dogPhase = 1
+        }
 
         if( dogWalkX < 180 && !dogAlert) {
             grassSky(ctx)
@@ -426,12 +411,19 @@ const hunting = (ctx) => {
 
         if(dogWalkX > 179 ){
             grassSky(ctx)
+            sky(ctx)
             if(timer === 0){
                 dogPhase = 0
             }
-            if(timer > 6){
+
+            if(timer > 18){
+                displayImage(ctx, dogWalking[7], (180 + 30 + (5 * (timer - 18))) / background.width * ctx.canvas.width, (dogWalkY - 30 + (5 * (timer - 18))) / background.height * ctx.canvas.height)
+                grass(ctx)
+            }else if(timer > 12){
+                displayImage(ctx, dogWalking[6], (180 + (5 * (timer - 12))) / background.width * ctx.canvas.width, (dogWalkY - (5 * (timer - 12))) / background.height * ctx.canvas.height)
+            } else if(timer > 6){
                 displayImage(ctx, dogWalking[5], 180 / background.width * ctx.canvas.width, (dogWalkY - 3) / background.height * ctx.canvas.height)
-                dogAlert = true
+                dogJump = true
             } else {
                 displayImage(ctx, dogWalking[dogPhase], 180 / background.width * ctx.canvas.width, dogWalkY / background.height * ctx.canvas.height)
             }
@@ -445,10 +437,9 @@ const hunting = (ctx) => {
         }
 
         // Change this to dog jump animation - when complete ???????????????????????
-        if(dogAlert && timer > 14){
+        if(dogJump && timer > 24){
             //clearInterval(gameLoop)
             gameStatus = 2
-            console.log(`Game status: `, gameStatus)
             grass(ctx)
         }
 
@@ -458,7 +449,6 @@ const hunting = (ctx) => {
     if(gameStatus === 2){
         huntActive = true
         gameStatus = 3
-        console.log(`Game status: `, gameStatus)
         ducksReleased++
         timer = 0
         duckXY = [0,0]
@@ -472,10 +462,8 @@ const hunting = (ctx) => {
             huntActive = false
             gameStatus = 4
             shotStatus = false
-            console.log(`Game status: `, gameStatus)
             if(timer > 10000){
                 gameStatus = 6
-                console.log(`Game status: `, gameStatus)
             }
         }
         movement(ctx)
@@ -501,7 +489,6 @@ const hunting = (ctx) => {
         timer = 0
         fallPhase = 0
         gameStatus = 5
-        console.log(`Game status: `, gameStatus)
     }
 
     // 5 DUCK FALLING SEQUENCE ------------------------------------
@@ -511,7 +498,6 @@ const hunting = (ctx) => {
             roundDisplay(ctx)
 
             gameStatus = 6
-            console.log(`Game status: `, gameStatus)
         }
 
         if(timer < 4) {
@@ -553,13 +539,11 @@ const hunting = (ctx) => {
         }
 
         gameStatus = 7
-        console.log(`Game status: `, gameStatus)
     }
     // 7 Dog w duck animation ------------------------------------
     if(gameStatus === 7){
         if (downStatus && dogY > 153){
             gameStatus = 8
-            console.log(`Game status: `, gameStatus)
         }
 
         sky(ctx)
@@ -591,7 +575,6 @@ const hunting = (ctx) => {
     // 8 - Reset perfectTimer, Test if perfect round
     if(gameStatus === 8) {
         perfectTimer = 0
-        console.log(hitDuck)
         if(hitDuck.filter(Boolean).length === 10){
             gameStatus = 9
             displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
@@ -631,7 +614,6 @@ const hunting = (ctx) => {
                 gameStatus = 0
                 round++
                 hitDuck = [false, false, false, false, false, false, false, false, false, false,]
-                console.log(`Game status: `, gameStatus)
             } else {
                 clearInterval(gameLoop)
                 displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
@@ -641,14 +623,12 @@ const hunting = (ctx) => {
             
         }else if(ducksReleased < 10){
             gameStatus = 2
-            console.log(`Game status: `, gameStatus)
-        } 
+            } 
         reset()
     }
-    //test++
-    //console.log(test)0
 }
 
+// Reset game variables
 const reset = () => {
     shots = 3
     ducksShot = 0
@@ -687,69 +667,8 @@ window.addEventListener('load', function(event) {
     mousePosition(ctx)
     click(ctx)
     // Define hunt area once ctx is created
-    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(148 / background.height * ctx.canvas.height)}  
+    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(144 / background.height * ctx.canvas.height)}  
     scoreBoard(ctx)
-    //displayImage(ctx, duckVD[0], 240, 100)
-
 })
 
-//
-
-
-
-
 const gameLoop = setInterval(hunting, time, ctx)
-
-
-
-
-
-
-
-
-
-
-
-
-// before we do this make ducks a class nd refactor hunting to create a new duck object
-
-// ?
-// Make main main game loop to manage all my game animations and timings together
-// ?
-
-// This looks like: a setInterval function that calls a very long game loop function every 500ms
-// Our main game loop function starts by clearing the entire board and then starts rendering all of the basic game assets 
-// Runs our game logic move functions and
-// we can use arrays to make rendering this large collection of assets easier/ more dry with iteration methods
-// for example
-// we can have a ducks array tht represents all of the active ducks which we will render for every game loop at the locked in time
-// when a new duck starts to be hunted we push it into the array and when duck is no longer active ( shot or time ran out) we remove it from the array
-// 
-
-// implementing this game loop with standardize the time across all of the game logic, but require removing redundant code from our many render functions
-
-
-  
- 
-
-
-// Game Order:
-// Main Game Loop
-//  - Beginning Round Animation
-//      - Dog Walk --> Dog Jump over grass
-//      - Round box in middle showing current round
-//  -Duck loop --> Ducks 1-10 (Loop ten times through)
-//      - Duck Flying --> blink #duck icon
-//      - onClick -->if(shotBoard>3) "fire gun" check collision & shotboard--
-//          -true --> duck fall animation & turn #duck red --> dog pop up animation holding #of duck shot --> update score & reset shot board
-//          -false --> shotboard -- 
-//      if time > limit 
-//          - dog with no duck animaiton & keep #duck white - reset shot #duck++
-//  - Reset
-//      
-//
-//
-
-
-/////////////////////////////////////////////////////////////////////////// 
-// <-----    Hold Area    ----->
