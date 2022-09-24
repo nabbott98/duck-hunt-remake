@@ -9,6 +9,7 @@ let ctx
 let shotStatus = false
 let ducksShot = 0
 let huntActive = false
+let ducksArr = []
 
 // Game loop variables
 let time = 100
@@ -29,6 +30,7 @@ let perfectTimer = 0
 let test = 0
 let red = false
 let dogJump = false
+
 
 // Movement Variables
 let duckPhase = 0
@@ -190,7 +192,7 @@ let flyAwayImg = new Image()
 flyAwayImg.src = `individual-assets/fly-away.png`
 
 // Functions
-ducksArr = []
+
 
 class duck {
     constructor(color, x, xDirection, yDirection){
@@ -340,7 +342,7 @@ const scoreBoard = (ctx) => {
 
     // Blue bars indicating how many ducks/round you must hit to advance rounds 
     ctx.fillStyle = `rgba(54, 176, 255, 1)`
-    ctx.fillRect(219 / background.width * ctx.canvas.width * 0.984, 215.45 / background.height * ctx.canvas.height * 0.99, (87.2 * ducksPerRound[round] / 10) / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
+    ctx.fillRect(225.5 / background.width * ctx.canvas.width * 0.984, 215.45 / background.height * ctx.canvas.height * 0.99, (80.7 * ducksPerRound[round] / 10) / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
 
     // Duck symbols indiv
     hitDuck.forEach((element, i) => {
@@ -452,6 +454,7 @@ const hunting = (ctx) => {
         ducksReleased++
         timer = 0
         duckXY = [0,0]
+        flash = true
         birth()
     }
 
@@ -472,6 +475,18 @@ const hunting = (ctx) => {
         sky(ctx)
         duckImg()
 
+        if(flash) {
+            ctx.fillStyle = `rgb(28,16,16)`
+            flash = false
+        } else {
+            ctx.fillStyle = `white`
+            flash = true
+        }
+
+        ducksArr.forEach((element, i) => {
+            ctx.fillRect((225.5 + (ducksReleased - i - 1) * 8.05) / background.width * ctx.canvas.width * 0.984, 208 / background.height * ctx.canvas.height * 0.99, 8.05 / background.width * ctx.canvas.width * 0.984, 7.2 / background.height * ctx.canvas.height * 0.99)
+            displayImage(ctx, duckBoard, 189 / background.width * ctx.canvas.width, 203 / background.height * ctx.canvas.height)
+        })
         
         ducksArr.forEach(element => {
             displayImage(ctx, element.img, element.x , element.y)
@@ -487,6 +502,7 @@ const hunting = (ctx) => {
 
     // 4 DUCK FALLING VARS ----------------------------------------
     if(gameStatus === 4){
+        scoreBoard(ctx)
         timer = 0
         fallPhase = 0
         gameStatus = 5
@@ -581,7 +597,7 @@ const hunting = (ctx) => {
             displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
             arcadeText(ctx, `PERFECT!!`, 11, "white", 257, 68, 'center')
             arcadeText(ctx, perfectRound[round], 11, "white", 257, 85, 'center')
-            scoreAdd(perfectRound[round])
+            score += perfectRound[round]
         } else {
             gameStatus = 10
         }
@@ -639,6 +655,37 @@ const reset = () => {
     mouseClick = []
     scoreBoard(ctx)
     ducksArr.pop()
+}
+
+const resetAll = () => {
+    // Reset all global game variables
+    round = 1
+    shots = 3
+    score = 0
+    duckColor = null
+    ctx
+    shotStatus = false
+    ducksShot = 0
+    huntActive = false
+    ducksArr = []
+    time = 100
+    timer = 0
+    ducksReleased = 0
+    gameStatus = 0
+    dogPhase = 1
+    dogWalkX = 0
+    dogWalkY = 145
+    sniff = false
+    dogAlert = false
+    fallPhase = 0
+    downStatus = false
+    duckHold = ducksShot + 1
+    dogY = 153
+    increment = -1
+    perfectTimer = 0
+    test = 0
+    red = false
+    dogJump = false
 }
 
 // Display fucntions --> Image, text
