@@ -31,7 +31,7 @@ let test = 0
 
 // Movement Variables
 let duckPhase = 0
-let duckXY = [0 , 50]
+
 let mouseClick = []
 
 // Round dependant variables
@@ -214,8 +214,8 @@ const birth = () => {
         color = 0
     }
     x = (85+ Math.floor(Math.random() * 342)) / background.width * 1920
-    xDirection = ((Math.random() < 0.5 ? -1 : 1) * Math.ceil(Math.random()) * 5) / background.width * ctx.canvas.width
-    yDirection = (Math.ceil(Math.random()) * 5) / background.height * ctx.canvas.height
+    xDirection = ((Math.random() < 0.5 ? -1 : 1) * Math.ceil(Math.random() * 5) + 3) / background.width * ctx.canvas.width
+    yDirection = (Math.ceil(Math.random() * 5) + 3) / background.height * ctx.canvas.height
     newDuck = new duck(color, x, xDirection, yDirection)
     ducksArr.push(newDuck)
 }
@@ -285,6 +285,7 @@ const click = (ctx) => {
         ducksArr.forEach(element => {
             if(element.x < mouseClick[0]  && mouseClick[0] < element.x + 33 / background.width * ctx.canvas.width && element.y < mouseClick[1]  && mouseClick[1] < element.y + 39 / background.width * ctx.canvas.width){
                 scoreAdd()
+                element.alive = false
                 shotStatus = true
                 ducksShot += 1
                 ducksShotRound ++
@@ -301,7 +302,7 @@ const sky = (ctx) => {
 }
 
 const grass = (ctx) => {
-    displayImage(ctx, grassImg, 0, 146 / background.height * ctx.canvas.height)
+    displayImage(ctx, grassImg, 0, 147 / background.height * ctx.canvas.height)
 }
 
 const grassSky = (ctx) => {
@@ -363,7 +364,9 @@ const scoreBoard = (ctx) => {
 }
 
 const scoreAdd = () => {
-    score += colorScore[ducksArr[0].color][round] // colorScore[ducksArr[#].color][round]
+    ducksArr.forEach(element => {
+        score += colorScore[element.color][round] // colorScore[ducksArr[#].color][round]
+    })
 }
 
 // --------------------------------Game Function--------------------------------
@@ -412,7 +415,7 @@ const hunting = (ctx) => {
             grassSky(ctx)
             displayImage(ctx, dogWalking[dogPhase], dogWalkX / background.width * ctx.canvas.width, dogWalkY / background.height * ctx.canvas.height)
             dogPhase++
-            dogWalkX += 50
+            dogWalkX += 5
         } 
 
         if(dogWalkX > 179 ){
@@ -436,7 +439,8 @@ const hunting = (ctx) => {
         }
 
         // Change this to dog jump animation - when complete ???????????????????????
-        if(dogAlert && timer > 10){
+        if(dogAlert && timer > 14){
+            //clearInterval(gameLoop)
             gameStatus = 2
             console.log(`Game status: `, gameStatus)
             grass(ctx)
