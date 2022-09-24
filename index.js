@@ -25,7 +25,6 @@ let downStatus = false
 let duckHold = ducksShot + 1
 let dogY = 153
 let increment = -1
-let ducksShotRound = 0
 
 let test = 0
 
@@ -282,13 +281,14 @@ const click = (ctx) => {
         shots--
 
         // Test Collision
-        ducksArr.forEach(element => {
+        ducksArr.forEach((element, i) => {
             if(element.x < mouseClick[0]  && mouseClick[0] < element.x + 33 / background.width * ctx.canvas.width && element.y < mouseClick[1]  && mouseClick[1] < element.y + 39 / background.width * ctx.canvas.width){
                 scoreAdd()
                 element.alive = false
                 shotStatus = true
                 ducksShot += 1
-                ducksShotRound ++
+                console.log('collision ', i)
+                hitDuck[ducksReleased - 1 - i] = true
             } 
         }) 
             scoreBoard(ctx)
@@ -584,12 +584,17 @@ const hunting = (ctx) => {
 
     // 10 - Test to see how many ducks have been released, if 10 new round if not gamestatus 2
     if(gameStatus === 10){
+        console.log(hitDuck)
+        if(hitDuck.filter(Boolean).length === 10){
+            console.log('perfect round')
+        }
         if (ducksReleased === 10){
-            if(ducksShotRound >= ducksPerRound[round]){
+            if(hitDuck.filter(Boolean).length >= ducksPerRound[round]){
                 ducksReleased = 0
                 gameStatus = 0
                 round++
-                ducksShotRound = 0
+                hitDuck = [false, false, false, false, false, false, false, false, false, false,]
+                console.log(`Game status: `, gameStatus)
             } else {
                 clearInterval(gameLoop)
                 displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
@@ -604,7 +609,7 @@ const hunting = (ctx) => {
         reset()
     }
     //test++
-    //console.log(test)
+    //console.log(test)0
 }
 
 const reset = () => {
