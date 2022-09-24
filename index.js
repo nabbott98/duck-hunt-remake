@@ -25,8 +25,9 @@ let downStatus = false
 let duckHold = ducksShot + 1
 let dogY = 153
 let increment = -1
-
+let perfectTimer = 0
 let test = 0
+let red = false
 
 // Movement Variables
 let duckPhase = 0
@@ -347,14 +348,19 @@ const scoreBoard = (ctx) => {
 
     // Duck Icons indicating which duck/ducks within the round you are at
     ctx.fillStyle = `white`
-    ctx.fillRect(219 / background.width * ctx.canvas.width * 0.984, 208 / background.height * ctx.canvas.height * 0.99, 87.2 / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
+    ctx.fillRect(225.5 / background.width * ctx.canvas.width * 0.984, 208 / background.height * ctx.canvas.height * 0.99, 80.5 / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
 
     // Blue bars indicating how many ducks/round you must hit to advance rounds 
     ctx.fillStyle = `rgba(54, 176, 255, 1)`
     ctx.fillRect(219 / background.width * ctx.canvas.width * 0.984, 215.45 / background.height * ctx.canvas.height * 0.99, (87.2 * ducksPerRound[round] / 10) / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
 
     // Duck symbols indiv
-    // duckRect(ctx)
+    hitDuck.forEach((element, i) => {
+        if(element){
+            ctx.fillStyle = `red`
+            ctx.fillRect((225.5 + i * 8.05) / background.width * ctx.canvas.width * 0.984, 208 / background.height * ctx.canvas.height * 0.99, 8.05 / background.width * ctx.canvas.width * 0.984, 7.2 / background.height * ctx.canvas.height * 0.99)
+        }
+    })
 
     // Display shots board
     displayImage(ctx, shotBoard[shots], 148 / background.width * ctx.canvas.width, 204 / background.height * ctx.canvas.height)
@@ -552,7 +558,7 @@ const hunting = (ctx) => {
     // 7 Dog w duck animation ------------------------------------
     if(gameStatus === 7){
         if (downStatus && dogY > 153){
-            gameStatus = 10
+            gameStatus = 8
             console.log(`Game status: `, gameStatus)
         }
 
@@ -582,14 +588,45 @@ const hunting = (ctx) => {
         }
     }
 
-    // 10 - Test to see how many ducks have been released, if 10 new round if not gamestatus 2
-    if(gameStatus === 10){
+    // 8 - Reset perfectTimer, Test if perfect round
+    if(gameStatus === 8) {
+        perfectTimer = 0
         console.log(hitDuck)
         if(hitDuck.filter(Boolean).length === 10){
-            console.log('perfect round')
+            gameStatus = 9
+            displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
+            arcadeText(ctx, `PERFECT!!`, 11, "white", 257, 68, 'center')
+            arcadeText(ctx, perfectRound[round], 11, "white", 257, 85, 'center')
+            scoreAdd(perfectRound[round])
+        } else {
+            gameStatus = 10
         }
+    }
+
+    // 9 - flash the duckimgs
+    if(gameStatus === 9){
+        if(red){
+            ctx.fillStyle = `red`
+            red = false
+        } else {
+            ctx.fillStyle = `white`
+            red = true
+        }
+        ctx.fillRect(225.5 / background.width * ctx.canvas.width * 0.984, 208 / background.height * ctx.canvas.height * 0.99, 80.5 / background.width * ctx.canvas.width * 0.984, 7 / background.height * ctx.canvas.height * 0.99)
+        displayImage(ctx, duckBoard, 189 / background.width * ctx.canvas.width, 203 / background.height * ctx.canvas.height)
+
+        if(perfectTimer > 1000){
+            gameStatus = 10
+        }
+        perfectTimer += time
+    }
+
+    // 10 - Test to see how many ducks have been released, if 10 new round if not gamestatus 2
+    if(gameStatus === 10){
+        
+
         if (ducksReleased === 10){
-            if(hitDuck.filter(Boolean).length >= ducksPerRound[round]){
+            if(hitDuck.filter(Boolean).length >= ducksPerRound[round] || round === 20){
                 ducksReleased = 0
                 gameStatus = 0
                 round++
@@ -639,7 +676,7 @@ const arcadeText = (ctx, text, size, color, x, y, align) => {
         ctx.fillText(text, x / background.width * ctx.canvas.width, y / background.height * ctx.canvas.height)
     })
 }
-
+// Define canvas and context
 ctx = document.getElementById('canvas').getContext('2d')
 ctx.canvas.width = window.innerWidth
 ctx.canvas.height = window.innerWidth/2.14
@@ -653,7 +690,11 @@ window.addEventListener('load', function(event) {
     huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(148 / background.height * ctx.canvas.height)}  
     scoreBoard(ctx)
     //displayImage(ctx, duckVD[0], 240, 100)
+
 })
+
+//
+
 
 
 
