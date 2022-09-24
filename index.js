@@ -197,7 +197,7 @@ class duck {
         this.alive = true
         this.color = color
         this.x = x
-        this.y = 143 / background.height * ctx.canvas.height
+        this.y = (143 - round + 1) / background.height * ctx.canvas.height
         this.xDirection = xDirection
         this.yDirection = yDirection
         this.img
@@ -215,8 +215,8 @@ const birth = () => {
         color = 0
     }
     x = (85+ Math.floor(Math.random() * 342)) / background.width * 1920
-    xDirection = ((Math.random() < 0.5 ? -1 : 1) * Math.ceil(Math.random() * 5) + 3) / background.width * ctx.canvas.width
-    yDirection = (Math.ceil(Math.random() * 5) + 3) / background.height * ctx.canvas.height
+    xDirection = ((Math.random() < 0.5 ? -1 : 1) * (round + Math.ceil(Math.random() * 5) + 3)) / background.width * ctx.canvas.width
+    yDirection = (round + Math.ceil(Math.random() * 5) + 3) / background.height * ctx.canvas.height
     newDuck = new duck(color, x, xDirection, yDirection)
     ducksArr.push(newDuck)
 }
@@ -477,6 +477,7 @@ const hunting = (ctx) => {
             displayImage(ctx, element.img, element.x , element.y)
         })
         grass(ctx)
+        scoreBackgroundHollow(ctx)
         // create movement function
      
         // This should probably be in the duck render function
@@ -514,7 +515,7 @@ const hunting = (ctx) => {
             fallPhase += 1
         }
 
-
+        grass(ctx)
         timer++ 
     } 
 
@@ -609,7 +610,7 @@ const hunting = (ctx) => {
         
 
         if (ducksReleased === 10){
-            if(hitDuck.filter(Boolean).length >= ducksPerRound[round] || round === 20){
+            if(hitDuck.filter(Boolean).length >= ducksPerRound[round] || round < 20){
                 ducksReleased = 0
                 gameStatus = 0
                 round++
@@ -667,7 +668,7 @@ window.addEventListener('load', function(event) {
     mousePosition(ctx)
     click(ctx)
     // Define hunt area once ctx is created
-    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor(144 / background.height * ctx.canvas.height)}  
+    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor((144 - round + 1) / background.height * ctx.canvas.height)}  
     scoreBoard(ctx)
 })
 
