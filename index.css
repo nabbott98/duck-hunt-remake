@@ -16,7 +16,7 @@ canvas {
     cursor: url(/individual-assets/crosshair.png) 12 11, auto;
 }
 h2 {
-    border: 3px solid forestgreen;
-    width: 100px;
+    font-family: 'Press Start 2P', cursive;
     height: 28px;
+    margin-top: 0;
 }

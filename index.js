@@ -273,6 +273,7 @@ const mousePosition = (ctx) =>{
 const click = (ctx) => {
     ctx.canvas.addEventListener('click', function(event){
     if (huntActive && shots > 0){
+        document.getElementById("canvas").style.borderColor = "red"
         let mouseX = event.clientX - ctx.canvas.offsetLeft
         let mouseY = event.clientY - ctx.canvas.offsetTop
         //alert(mouseX+" | "+mouseY)
@@ -643,6 +644,7 @@ const hunting = (ctx) => {
             } 
         reset()
     }
+    document.getElementById("canvas").style.borderColor = "black"
 }
 
 // Reset game variables
