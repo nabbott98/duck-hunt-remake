@@ -14,7 +14,7 @@ let ducksArr = []
 // Game loop variables
 let time = 100
 let timer = 0
-let ducksReleased = 9
+let ducksReleased = 0
 let gameStatus = 0
 let dogPhase = 1
 let dogWalkX = 0
