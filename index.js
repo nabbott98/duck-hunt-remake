@@ -218,8 +218,8 @@ const birth = () => {
         color = 0
     }
     x = (85+ Math.floor(Math.random() * 342)) / background.width * ctx.canvas.width
-    xDirection = ((Math.random() < 0.5 ? -1 : 1) * (round + Math.ceil(Math.random() * 5) + 3)) / background.width * ctx.canvas.width
-    yDirection = (round + Math.ceil(Math.random() * 5) + 3) / background.height * ctx.canvas.height
+    xDirection = ((Math.random() < 0.5 ? -1 : 1) * ((color * 3) + round + Math.ceil(Math.random() * 5) + 3)) / background.width * ctx.canvas.width
+    yDirection = ((color * 3) + round + Math.ceil(Math.random() * 5) + 3) / background.height * ctx.canvas.height
     newDuck = new duck(color, x, xDirection, yDirection)
     ducksArr.push(newDuck)
 }
