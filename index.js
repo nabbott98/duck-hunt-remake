@@ -14,7 +14,7 @@ let ducksArr = []
 // Game loop variables
 let time = 100
 let timer = 0
-let ducksReleased = 0
+let ducksReleased = 9
 let gameStatus = 0
 let dogPhase = 1
 let dogWalkX = 0
@@ -30,6 +30,7 @@ let perfectTimer = 0
 let test = 0
 let red = false
 let dogJump = false
+let inPlay = false
 
 
 // Movement Variables
@@ -216,7 +217,7 @@ const birth = () => {
     } else {
         color = 0
     }
-    x = (85+ Math.floor(Math.random() * 342)) / background.width * 1920
+    x = (85+ Math.floor(Math.random() * 342)) / background.width * ctx.canvas.width
     xDirection = ((Math.random() < 0.5 ? -1 : 1) * (round + Math.ceil(Math.random() * 5) + 3)) / background.width * ctx.canvas.width
     yDirection = (round + Math.ceil(Math.random() * 5) + 3) / background.height * ctx.canvas.height
     newDuck = new duck(color, x, xDirection, yDirection)
@@ -237,6 +238,7 @@ const movement = () => {
             element.phase = 0
         }
 
+        console.log(element.x, element.y)
 
         element.x += element.xDirection
         element.y -= element.yDirection 
@@ -264,8 +266,8 @@ const mousePosition = (ctx) =>{
     ctx.canvas.addEventListener('mousemove', function(event){
         let mouseX = event.clientX - ctx.canvas.offsetLeft
         let mouseY = event.clientY - ctx.canvas.offsetTop
-        let status = document.getElementById('status')
-        status.innerHTML = mouseX+" | "+mouseY
+        //let status = document.getElementById('status')
+        //status.innerHTML = mouseX+" | "+mouseY
         mouseClick = [mouseX, mouseY]
     })
 }
@@ -391,6 +393,7 @@ const hunting = (ctx) => {
         dogJump = false
 
         // Display round banner
+        sky(ctx)
         scoreBoard(ctx)
         roundDisplay(ctx)
         displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
@@ -627,16 +630,19 @@ const hunting = (ctx) => {
         
 
         if (ducksReleased === 10){
-            if(hitDuck.filter(Boolean).length >= ducksPerRound[round] || round < 20){
+            if(hitDuck.filter(Boolean).length >= ducksPerRound[round]){
                 ducksReleased = 0
                 gameStatus = 0
                 round++
                 hitDuck = [false, false, false, false, false, false, false, false, false, false,]
+                console.log('reset')
             } else {
                 clearInterval(gameLoop)
                 displayImage(ctx, roundNum, 203 / background.width * ctx.canvas.width, 49 / background.height * ctx.canvas.height)
                 arcadeText(ctx, `GAME`, 18, "white", 257, 71, 'center')
                 arcadeText(ctx, `OVER`, 18, "white", 257, 90, 'center')
+                resetAll()
+                setTimeout(welcomeScreen, 1500, ctx)
             }
             
         }else if(ducksReleased < 10){
@@ -688,6 +694,7 @@ const resetAll = () => {
     test = 0
     red = false
     dogJump = false
+    inPlay = false
 }
 
 // Display fucntions --> Image, text
@@ -706,6 +713,15 @@ const arcadeText = (ctx, text, size, color, x, y, align) => {
         ctx.fillText(text, x / background.width * ctx.canvas.width, y / background.height * ctx.canvas.height)
     })
 }
+
+const welcomeScreen = (ctx) => {
+    ctx.fillStyle = 'black'
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+    arcadeText(ctx, `DUCK HUNT REMAKE`, 18, "white", 257, 71, 'center')
+    displayImage(ctx, dogDuck[3], 222.5 / background.width * ctx.canvas.width, 96 / background.height * ctx.canvas.height)
+    arcadeText(ctx, `PRESS ANY KEY TO START`, 18, "white", 257, 185, 'center')
+}
+
 // Define canvas and context
 ctx = document.getElementById('canvas').getContext('2d')
 ctx.canvas.width = window.innerWidth
@@ -718,7 +734,14 @@ window.addEventListener('load', function(event) {
     click(ctx)
     // Define hunt area once ctx is created
     huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor((144 - round + 1) / background.height * ctx.canvas.height)}  
-    scoreBoard(ctx)
+    welcomeScreen(ctx)
 })
 
-const gameLoop = setInterval(hunting, time, ctx)
+//const gameLoop = null
+
+document.addEventListener('keydown', (event) => {
+    if(!inPlay){
+        inPlay = true
+        gameLoop = setInterval(hunting, time, ctx) 
+    }
+})
