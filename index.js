@@ -650,7 +650,7 @@ const hunting = (ctx) => {
             } 
         reset()
     }
-    document.getElementById("canvas").style.borderColor = "black"
+    document.getElementById("canvas").style.borderColor = "black")
 }
 
 // Reset game variables
