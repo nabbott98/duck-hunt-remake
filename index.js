@@ -237,9 +237,6 @@ const movement = () => {
         if (element.phase > 3){
             element.phase = 0
         }
-
-        console.log(element.x, element.y)
-
         element.x += element.xDirection
         element.y -= element.yDirection 
     });
