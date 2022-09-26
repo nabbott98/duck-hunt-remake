@@ -17,7 +17,7 @@ canvas {
     cursor: url(/duck-hunt-remake/individual-assets/crosshair.png?) 25 23, auto;
 
     /* Repo filepath for local running*/
-    cursor: url(/individual-assets/crosshair.png?) 25 23, auto;
+    /*cursor: url(/individual-assets/crosshair.png?) 25 23, auto;*/
 }
 h3 {
     font-family: 'Press Start 2P', cursive;
