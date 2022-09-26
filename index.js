@@ -49,7 +49,7 @@ colorScore = [
 
 perfectRound = [null, 10000,  10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 15000, 15000, 15000, 15000, 15000, 20000, 20000, 20000, 20000, 20000, 30000]
 
-let hitDuck = [false, false, false, false, false, false, false, false, false, false,]
+let hitDuck = [false, false, false, false, false, false, false, false, false, false]
 
 // Image loading
 // Duck color [0: brown, 1: violet, 2: red]
@@ -627,7 +627,7 @@ const hunting = (ctx) => {
         
 
         if (ducksReleased === 10){
-            if(hitDuck.filter(Boolean).length >= ducksPerRound[round]){
+            if(hitDuck.filter(Boolean).length >= ducksPerRound[round] && round < 20){
                 ducksReleased = 0
                 gameStatus = 0
                 round++
