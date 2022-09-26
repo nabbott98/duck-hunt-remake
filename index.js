@@ -716,7 +716,7 @@ const welcomeScreen = (ctx) => {
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     arcadeText(ctx, `DUCK HUNT REMAKE`, 18, "white", 257, 71, 'center')
     displayImage(ctx, dogDuck[3], 222.5 / background.width * ctx.canvas.width, 96 / background.height * ctx.canvas.height)
-    arcadeText(ctx, `PRESS ANY KEY TO START`, 18, "white", 257, 185, 'center')
+    arcadeText(ctx, `PRESS ANY KEY/TAP TO START`, 18, "white", 257, 185, 'center')
     arcadeText(ctx, `CLICK/TAP TO SHOOT`, 10, "white", 257, 215, 'center')
 }
 
