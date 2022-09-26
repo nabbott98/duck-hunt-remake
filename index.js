@@ -742,3 +742,10 @@ document.addEventListener('keydown', (event) => {
         gameLoop = setInterval(hunting, time, ctx) 
     }
 })
+
+document.addEventListener('touchstart', (event) => {
+    if(!inPlay){
+        inPlay = true
+        gameLoop = setInterval(hunting, time, ctx) 
+    }
+})
