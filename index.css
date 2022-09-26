@@ -14,7 +14,7 @@ canvas {
     aspect-ratio: 2.14/1;
 
     /*Extra folder filepath for github deployment*/
-    cursor: url(/project1/individual-assets/crosshair.png?) 25 23, auto;
+    cursor: url(/duck-hunt-remake/individual-assets/crosshair.png?) 25 23, auto;
 
     /* Repo filepath for local running*/
     cursor: url(/individual-assets/crosshair.png?) 25 23, auto;
