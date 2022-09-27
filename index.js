@@ -1,4 +1,5 @@
 // Global game variables
+//Great job keeping things!
 const background = {width: 512, height: 240}
 let huntArea
 let round = 1
@@ -193,8 +194,7 @@ let flyAwayImg = new Image()
 flyAwayImg.src = `individual-assets/fly-away.png`
 
 // Functions
-
-
+// Make sure you capitalize your 'duck' class here and everywhere else
 class duck {
     constructor(color, x, xDirection, yDirection){
         this.alive = true
