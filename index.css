@@ -1,13 +1,13 @@
 *{
-    background-color: white;
+    background-color: black;
 }
 
 #container {
-    margin: 5px 5px 5px 0px;
+    margin: 5px 8px 5px 0px;
 }
 
 canvas {
-    border: 3px solid black;
+    border: 5px solid black;
     width: 100%;
     image-rendering: pixelated;
     background-size: 100%;
@@ -23,4 +23,6 @@ h3 {
     font-family: 'Press Start 2P', cursive;
     font-size: 10px;
     margin-top: 0;
+    color: white;
+    padding-left: 5px;
 }
