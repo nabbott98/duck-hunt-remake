@@ -750,3 +750,18 @@ document.addEventListener('touchstart', (event) => {
         gameLoop = setInterval(hunting, time, ctx) 
     }
 })
+
+window.addEventListener('resize', (event) => {
+    ctx.canvas.width = window.innerWidth
+    ctx.canvas.height = window.innerWidth/2.14
+    ctx.imageSmoothingEnabled = false
+    huntArea = {left: 0, top: 0, right: Math.floor(477 / background.width * ctx.canvas.width), bottom: Math.floor((144 - round + 1) / background.height * ctx.canvas.height)}  
+
+    if(inPlay){
+        scoreBoard(ctx)
+        sky(ctx)
+        grass(ctx)
+    } else {
+        welcomeScreen(ctx)
+    }
+})
