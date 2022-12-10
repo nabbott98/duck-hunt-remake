@@ -1,5 +1,5 @@
-# project1
-![Duck Hunt Game Preview](/Duck-Hunt-Game-Preview.png)
+# Duck Hunt™ Remake
+![Duck Hunt Game Preview](./other-assets//Duck-Hunt-Game-Preview.png)
 
 Intended project  -- Duck Hunt Recreation
 Version of game can be found here - https://www.retrogames.cz/play_1185-NES.php?language=EN
@@ -8,7 +8,7 @@ Backup Idea - Shoots and Ladders remake
 
 Picture for added effect: Duck-Hunt-Game-Preview.png
 
-Duck Hunt is a game deceloped for NES, THis game simulates the experience of duck hunting with one heckin doggo friend. I intend to implement modes that include(but are not limited to) multiple ducks, difficulty in flight speed and pattern and potentially the spread of fire from hunting weapon used. Upon shooting said ducks a score displays and then the doggo friend goes and fetches them and shows off their hard work!
+Duck Hunt is a game deceloped for NES, This game simulates the experience of duck hunting with one heckin doggo friend. I intend to implement modes that include(but are not limited to) multiple ducks, difficulty in flight speed and pattern and potentially the spread of fire from hunting weapon used. Upon shooting said ducks a score displays and then the doggo friend goes and fetches them and shows off their hard work!
 
 
 Technologies Used - 
@@ -18,7 +18,7 @@ Asssets I intend on using: one of retro or updated, both appear to be copyright 
 - Retro themed: https://www.mariomayhem.com/downloads/sprites/duck_hunt_nes_sprites.php
 - Updated: https://www.spriters-resource.com/fullview/63915/
 
-![Duck Hunt Assets](/Duck%20Hunt%20Assets%20-%20Updated.png)
+![Duck Hunt Assets](./other-assets//Duck%20Hunt%20Assets%20-%20Updated.png)
 
 As a user, I want the ability to... 
   - Choose difficulty
@@ -36,7 +36,7 @@ As a user, I want the ability to...
 WireFrames - 
 -Wireframes inside repo
 
-![Duck Hunt Wireframe](/Duck%20Hunt%20WireFrame.drawio.png)
+![Duck Hunt Wireframe](./other-assets//Duck%20Hunt%20WireFrame.drawio.png)
 
 
 Player: {
@@ -73,11 +73,5 @@ function - gameloop - holds the entire logic that runs the game
 function - detectHit - used to see if corsshair has collided with duck when mouse is clicked
 function - duckFlight - used to move the ducks around the screen, random flight to be determined by function
 
-Schedule...
-- Monday - Build environment, start loading in assets
-- Tuesday - Finish loading in assets, collision point and click 
-- Wednesday - Game scoring and animations
-- Thursday - Finishing touches and animations
-- Friday - Presentation Day!
 
 
