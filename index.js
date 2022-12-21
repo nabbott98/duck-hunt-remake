@@ -55,7 +55,7 @@ let hitDuck = [false, false, false, false, false, false, false, false, false, fa
 // Duck color [0: brown, 1: violet, 2: red]
 
 // Import flying ducks -- I had to do most of the importing by hardcoding :(
-    // I tried to use a 3d array to store all the ducks but I could nto get it to work
+// I tried to use a 3d array to store all the ducks but I could nto get it to work
 //Import Flying Ducks and falling ducks
 
 let duckBR = []
@@ -193,8 +193,7 @@ let flyAwayImg = new Image()
 flyAwayImg.src = `individual-assets/fly-away.png`
 
 // Functions
-
-
+// Create Duck, color speed and initial direction of travel
 class duck {
     constructor(color, x, xDirection, yDirection){
         this.alive = true
@@ -208,6 +207,7 @@ class duck {
     }
 }
 
+// Create Duck inside game
 const birth = () => {
     colorRan = Math.ceil(Math.random() * 20)
     if (colorRan > 17){
@@ -224,6 +224,7 @@ const birth = () => {
     ducksArr.push(newDuck)
 }
 
+// Update ducks movement and and determine if 
 const movement = () => {
     ducksArr.forEach(element => {
         if(element.x < huntArea.left || element.x > huntArea.right){
@@ -242,6 +243,7 @@ const movement = () => {
     });
 }
 
+// Determine duck img direction
 const duckImg = () => {
     ducksArr.forEach(element => {
         if(Math.abs(element.yDirection) >= Math.abs(element.xDirection)){
@@ -269,6 +271,7 @@ const mousePosition = (ctx) =>{
     })
 }
 
+// Testing click during game
 const click = (ctx) => {
     ctx.canvas.addEventListener('click', function(event){
     if (huntActive && shots > 0){
@@ -327,6 +330,7 @@ const roundDisplay = (ctx) => {
     arcadeText(ctx, `R=${round}`, 8, `rgba(151, 235, 30, 1)`, 149.2, 197.4, 'left')
 }
 
+// Display scoreboard function to call when drawing canvas
 const scoreBoard = (ctx) => {
     // redisplay board background
     scoreBackground(ctx)
@@ -359,6 +363,7 @@ const scoreBoard = (ctx) => {
     displayImage(ctx, duckBoard, 189 / background.width * ctx.canvas.width, 203 / background.height * ctx.canvas.height)
 }
 
+// Add score to scoreboard based on duck color
 const scoreAdd = () => {
     ducksArr.forEach(element => {
         score += colorScore[element.color][round] // colorScore[ducksArr[#].color][round]
@@ -662,6 +667,7 @@ const reset = () => {
     ducksArr.pop()
 }
 
+// Reset all state specific variables
 const resetAll = () => {
     // Reset all global game variables
     round = 1
@@ -711,6 +717,7 @@ const arcadeText = (ctx, text, size, color, x, y, align) => {
     })
 }
 
+// Welcome screen
 const welcomeScreen = (ctx) => {
     ctx.fillStyle = 'black'
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
@@ -735,8 +742,7 @@ window.addEventListener('load', function(event) {
     welcomeScreen(ctx)
 })
 
-//const gameLoop = null
-
+// Start game on keypress
 document.addEventListener('keydown', (event) => {
     if(!inPlay){
         inPlay = true
@@ -744,6 +750,7 @@ document.addEventListener('keydown', (event) => {
     }
 })
 
+// Start game on screen tap
 document.addEventListener('touchstart', (event) => {
     if(!inPlay){
         inPlay = true
@@ -751,6 +758,7 @@ document.addEventListener('touchstart', (event) => {
     }
 })
 
+// Resize canvas based on window change, if for instance moblie player rotates phone or tablet
 window.addEventListener('resize', (event) => {
     ctx.canvas.width = window.innerWidth
     ctx.canvas.height = window.innerWidth/2.14
